@@ -94,67 +94,45 @@ body {
 }
 
 /* ========================================
-   SISTEMA DE ABAS
+   CONTEÚDO DAS SEÇÕES
 ======================================== */
 
-.tabs {
-    display: flex;
-    background: var(--gray-100);
-    border-bottom: 2px solid var(--border);
-}
-
-.tab-button {
-    flex: 1;
-    padding: var(--spacing-md) var(--spacing-lg);
-    background: transparent;
-    border: none;
-    font-size: var(--font-size-base);
-    font-weight: 500;
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
+.content-wrapper {
+    margin-left: 0;
+    padding: var(--spacing-xl);
     position: relative;
 }
 
-.tab-button:hover {
-    background: var(--gray-200);
-    color: var(--gray-800);
+.content-wrapper::before {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vh;
+    max-width: 1200px;
+    max-height: 1200px;
+    background-image: url('logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
 }
 
-.tab-button.active {
-    background: white;
-    color: var(--primary);
-    border-bottom-color: var(--primary);
-    font-weight: 600;
+.content-section {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 2px solid var(--gray-200);
+    scroll-margin-top: 20px;
+    position: relative;
+    z-index: 1;
 }
 
-/* ========================================
-   CONTEÚDO DAS ABAS
-======================================== */
-
-.tab-content-wrapper {
-    padding: var(--spacing-xl);
-}
-
-.tab-content {
-    display: none;
-    animation: fadeIn 0.4s ease;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.content-section:last-child {
+    border-bottom: none;
 }
 
 /* ========================================
@@ -195,7 +173,7 @@ body {
 }
 
 .form-group-section {
-    background: var(--gray-50);
+    background: rgba(249, 250, 251, 0.7);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius);
     border: 1px solid var(--border);
@@ -661,4 +639,14 @@ select:disabled,
 textarea:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* ========================================
+   RESPONSIVIDADE
+======================================== */
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: var(--spacing-md);
+    }
 }

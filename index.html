@@ -14,18 +14,11 @@
             <p class="subtitle">Sistema de Gestão Processual</p>
         </header>
 
-        <!-- Navegação por Abas -->
-        <nav class="tabs">
-            <button class="tab-button active" data-tab="tab-dados">Dados do Processo</button>
-            <button class="tab-button" data-tab="tab-situacao">Situação e Acompanhamento</button>
-            <button class="tab-button" data-tab="tab-financeiro">Acompanhamento Financeiro</button>
-        </nav>
-
-        <!-- Conteúdo das Abas -->
-        <div class="tab-content-wrapper">
+        <!-- Conteúdo das Seções -->
+        <div class="content-wrapper">
             
-            <!-- ========== ABA 1: DADOS DO PROCESSO ========== -->
-            <div id="tab-dados" class="tab-content active">
+            <!-- ========== SEÇÃO 1: DADOS DO PROCESSO ========== -->
+            <section id="section-dados" class="content-section">
                 <h2 class="section-title">Dados do Processo</h2>
                 
                 <form id="form-dados-processo" class="form-section">
@@ -172,10 +165,10 @@
                         <button type="reset" class="btn btn-secondary">Limpar Formulário</button>
                     </div>
                 </form>
-            </div>
+            </section>
 
-            <!-- ========== ABA 2: SITUAÇÃO E ACOMPANHAMENTO ========== -->
-            <div id="tab-situacao" class="tab-content">
+            <!-- ========== SEÇÃO 2: SITUAÇÃO E ACOMPANHAMENTO ========== -->
+            <section id="section-situacao" class="content-section">
                 <h2 class="section-title">Situação e Acompanhamento</h2>
 
                 <!-- Histórico de Andamentos -->
@@ -290,12 +283,11 @@
                 <!-- Botões de Ação -->
                 <div class="form-actions">
                     <button class="btn btn-primary">Salvar Andamentos</button>
-                    <button class="btn btn-secondary">← Voltar</button>
                 </div>
-            </div>
+            </section>
 
-            <!-- ========== ABA 3: ACOMPANHAMENTO FINANCEIRO ========== -->
-            <div id="tab-financeiro" class="tab-content">
+            <!-- ========== SEÇÃO 3: ACOMPANHAMENTO FINANCEIRO ========== -->
+            <section id="section-financeiro" class="content-section">
                 <h2 class="section-title">Acompanhamento Financeiro</h2>
 
                 <!-- Honorários Contratuais -->
@@ -431,9 +423,8 @@
                 <!-- Botões de Ação -->
                 <div class="form-actions">
                     <button class="btn btn-primary">Salvar Registros</button>
-                    <button class="btn btn-secondary">← Voltar</button>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 

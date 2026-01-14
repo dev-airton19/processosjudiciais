@@ -1,26 +1,55 @@
 // ========================================
-// SISTEMA DE NAVEGAÇÃO POR ABAS
+// SISTEMA DE NAVEGAÇÃO VERTICAL COM SCROLL SUAVE
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Seleciona todos os botões de aba
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+    // Seleciona todos os links de navegação
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.content-section');
 
-    // Adiciona evento de clique em cada botão
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove classe 'active' de todos os botões e conteúdos
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            // Adiciona classe 'active' ao botão clicado
+    // Adiciona evento de clique em cada link para scroll suave
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove classe 'active' de todos os links
+            navLinks.forEach(l => l.classList.remove('active'));
+            
+            // Adiciona classe 'active' ao link clicado
             this.classList.add('active');
+            
+            // Faz scroll suave até a seção
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
 
-            // Exibe o conteúdo correspondente
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
+    // Destaca o link ativo baseado na posição do scroll
+    window.addEventListener('scroll', function() {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            
+            if (window.pageYOffset >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
         });
     });
 
