@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Processos Judiciais</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <header class="header">
+            <div class="header-top">
+                <button type="button" id="btn-voltar-listagem" class="btn-voltar" title="Voltar para listagem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Voltar para Listagem
+                </button>
+            </div>
+            <h1>Controle de Processos Judiciais</h1>
+            <p class="subtitle">Sistema de Gestão Processual</p>
+        </header>
+
+        <!-- Conteúdo das Seções -->
+        <div class="content-wrapper">
+            
+            <!-- ========== SEÇÃO 1: DADOS DO PROCESSO ========== -->
+            <section id="section-dados" class="content-section">
+                <h2 class="section-title">Dados do Processo</h2>
+                
+                <form id="form-dados-processo" class="form-section">
+                    
+                    <!-- Seção: Identificação -->
+                    <div class="form-group-section">
+                        <h3 class="section-subtitle">Identificação do Processo</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="numero-processo">Número do Processo (CNJ)</label>
+                                <input type="text" id="numero-processo" placeholder="0000000-00.0000.0.00.0000">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="comarca">Comarca / Vara</label>
+                                <input type="text" id="comarca" placeholder="Ex: 1ª Vara Cível da Comarca de São Paulo">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orgao">Órgão / Tribunal</label>
+                                <input type="text" id="orgao" placeholder="Ex: TJSP, STF, TRT">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="classe-processual">Classe Processual</label>
+                                <select id="classe-processual">
+                                    <option value="">Selecione...</option>
+                                    <option value="Ação Civil Pública">Ação Civil Pública</option>
+                                    <option value="Ação de Cobrança">Ação de Cobrança</option>
+                                    <option value="Ação de Indenização">Ação de Indenização</option>
+                                    <option value="Ação Ordinária">Ação Ordinária</option>
+                                    <option value="Procedimento Comum">Procedimento Comum</option>
+                                    <option value="Ação de Alimentos">Ação de Alimentos</option>
+                                    <option value="Ação Penal Pública">Ação Penal Pública</option>
+                                    <option value="Habeas Corpus">Habeas Corpus</option>
+                                    <option value="Reclamação Trabalhista">Reclamação Trabalhista</option>
+                                    <option value="Agravo de Instrumento">Agravo de Instrumento</option>
+                                    <option value="Recurso Inominado">Recurso Inominado</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campo condicional: aparece quando "Outros" é selecionado -->
+                        <div class="form-row" id="outros-classe-row" style="display: none;">
+                            <div class="form-group">
+                                <label for="especificar-classe">Especificar Classe</label>
+                                <input type="text" id="especificar-classe" placeholder="Digite a classe processual">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="natureza-juridica">Natureza Jurídica</label>
+                                <input type="text" id="natureza-juridica" placeholder="Ex: Direito Civil, Penal, Trabalhista">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="valor-causa">Valor da Causa (R$)</label>
+                                <input type="text" id="valor-causa" placeholder="0,00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção: Partes -->
+                    <div class="form-group-section">
+                        <h3 class="section-subtitle">Partes Envolvidas</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="autor">Autor(es)</label>
+                                <textarea id="autor" rows="3" placeholder="Nome completo do(s) autor(es)"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reu">Réu(s)</label>
+                                <textarea id="reu" rows="3" placeholder="Nome completo do(s) réu(s)"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="advogado">Advogado(s) Responsável(eis)</label>
+                                <textarea id="advogado" rows="3" placeholder="Nome e OAB do(s) advogado(s)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção: Status e Documentos -->
+                    <div class="form-group-section">
+                        <h3 class="section-subtitle">Status e Documentação</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="data-ajuizamento">Data de Ajuizamento</label>
+                                <input type="date" id="data-ajuizamento">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="situacao-atual">Situação Atual</label>
+                                <select id="situacao-atual">
+                                    <option value="">Selecione...</option>
+                                    <option value="Em andamento">Em andamento</option>
+                                    <option value="Aguardando julgamento">Aguardando julgamento</option>
+                                    <option value="Suspenso">Suspenso</option>
+                                    <option value="Sentenciado">Sentenciado</option>
+                                    <option value="Em recurso">Em recurso</option>
+                                    <option value="Arquivado">Arquivado</option>
+                                    <option value="Baixado">Baixado</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campo condicional: aparece quando "Outros" é selecionado em Situação -->
+                        <div class="form-row" id="outros-situacao-row" style="display: none;">
+                            <div class="form-group">
+                                <label for="especificar-situacao">Especificar Situação</label>
+                                <input type="text" id="especificar-situacao" placeholder="Digite a situação atual">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="upload-documentos">Upload de Documentos</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="upload-documentos" multiple>
+                                    <label for="upload-documentos" class="file-upload-label">
+                                        Escolher arquivos ou arraste aqui
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="reset" class="btn btn-secondary">Limpar Formulário</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- ========== SEÇÃO 2: SITUAÇÃO E ACOMPANHAMENTO ========== -->
+            <section id="section-situacao" class="content-section">
+                <h2 class="section-title">Situação e Acompanhamento</h2>
+
+                <!-- Histórico de Andamentos -->
+                <div class="form-group-section">
+                    <div class="section-header">
+                        <h3 class="section-subtitle">Histórico de Andamentos</h3>
+                        <button class="btn btn-small btn-primary" id="btn-add-andamento">+ Adicionar Novo Andamento</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição do Andamento</th>
+                                    <th>Responsável</th>
+                                    <th style="width: 150px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-andamentos">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #6b7280; padding: 40px;">
+                                        Nenhum andamento cadastrado
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Adicionar Andamento -->
+                <div id="modal-andamento" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Adicionar Novo Andamento</h3>
+                            <button class="modal-close" id="modal-close-andamento">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="andamento-data">Data do Andamento</label>
+                                <input type="date" id="andamento-data" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="andamento-descricao">Descrição</label>
+                                <textarea id="andamento-descricao" rows="4" placeholder="Descreva o andamento processual" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="btn-cancelar-andamento">Cancelar</button>
+                            <button class="btn btn-primary" id="btn-salvar-andamento">Salvar Andamento</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas e Prazos -->
+                <div class="form-group-section">
+                    <div class="section-header">
+                        <h3 class="section-subtitle">Alertas e Prazos</h3>
+                        <button class="btn btn-small btn-primary" id="btn-add-prazo">+ Novo Prazo</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Data Limite</th>
+                                    <th>Dias Restantes</th>
+                                    <th style="width: 150px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-prazos">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #6b7280;">Nenhum prazo cadastrado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Adicionar Prazo -->
+                <div id="modal-prazo" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Adicionar Novo Prazo</h3>
+                            <button class="modal-close" id="modal-close-prazo">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="prazo-descricao">Descrição do Prazo</label>
+                                <textarea id="prazo-descricao" rows="3" placeholder="Ex: Prazo para contestação, Recurso de apelação, Data da audiência..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="prazo-data">Data Limite</label>
+                                <input type="date" id="prazo-data" required>
+                                <small class="form-hint">A partir de 2 dias ou menos, você receberá alertas</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="btn-cancelar-prazo">Cancelar</button>
+                            <button class="btn btn-primary" id="btn-salvar-prazo">Salvar Prazo</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observações Técnicas -->
+                <div class="form-group-section">
+                    <h3 class="section-subtitle">Observações Técnicas</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <textarea id="observacoes-tecnicas" rows="6" placeholder="Digite observações técnicas sobre o processo..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary" id="btn-salvar-observacoes">Atualizar Observações</button>
+                    </div>
+                </div>
+
+                <!-- Providências a Serem Tomadas -->
+                <div class="form-group-section">
+                    <div class="section-header">
+                        <h3 class="section-subtitle">Providências a Serem Tomadas</h3>
+                        <button class="btn btn-small btn-primary" id="btn-add-providencia">+ Adicionar Providência</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tarefa</th>
+                                    <th>Quem Faz</th>
+                                    <th>Status</th>
+                                    <th style="width: 150px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-providencias">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #6b7280;">Nenhuma providência cadastrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Adicionar Providência -->
+                <div id="modal-providencia" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Adicionar Nova Providência</h3>
+                            <button class="modal-close" id="modal-close-providencia">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="providencia-tarefa">Tarefa</label>
+                                <textarea id="providencia-tarefa" rows="3" placeholder="Ex: Protocolar petição de urgência, Elaborar contestação..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="providencia-responsavel">Quem Faz</label>
+                                <input type="text" id="providencia-responsavel" placeholder="Ex: Dr. Carlos, Dra. Maria..." required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="btn-cancelar-providencia">Cancelar</button>
+                            <button class="btn btn-primary" id="btn-salvar-providencia">Salvar Providência</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== SEÇÃO 3: ACOMPANHAMENTO FINANCEIRO ========== -->
+            <section id="section-financeiro" class="content-section">
+                <h2 class="section-title">Acompanhamento Financeiro</h2>
+
+                <!-- Honorários Contratuais -->
+                <div class="form-group-section">
+                    <div class="section-header">
+                        <h3 class="section-subtitle">Honorários Contratuais</h3>
+                        <button class="btn btn-small btn-primary" id="btn-add-honorario-contratual">+ Adicionar Honorário Contratual</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Valor (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-honorarios-contratuais">
+                                <tr>
+                                    <td>05/01/2026</td>
+                                    <td>Entrada do processo</td>
+                                    <td>R$ 5.000,00</td>
+                                </tr>
+                                <tr>
+                                    <td>15/01/2026</td>
+                                    <td>Segunda parcela</td>
+                                    <td>R$ 3.000,00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Honorários Sucumbenciais -->
+                <div class="form-group-section">
+                    <div class="section-header">
+                        <h3 class="section-subtitle">Honorários Sucumbenciais</h3>
+                        <button class="btn btn-small btn-primary" id="btn-add-honorario-sucumbencial">+ Adicionar Honorário Sucumbencial</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Fonte</th>
+                                    <th>Valor (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-honorarios-sucumbenciais">
+                                <tr>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Honorários a Receber -->
+                <div class="form-group-section">
+                    <div class="section-header">
+                        <h3 class="section-subtitle">Honorários a Receber (Previsão)</h3>
+                        <button class="btn btn-small btn-primary" id="btn-add-previsao">+ Adicionar Previsão de Recebimento</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data Prevista</th>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                    <th>Valor (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-previsoes">
+                                <tr>
+                                    <td>30/01/2026</td>
+                                    <td>Contratual</td>
+                                    <td>Terceira parcela</td>
+                                    <td>R$ 2.000,00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Relatórios Financeiros -->
+                <div class="form-group-section">
+                    <h3 class="section-subtitle">Relatórios Financeiros</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Período do Relatório</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="periodo-relatorio" value="mes-atual" checked>
+                                    <span>Mês atual</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="periodo-relatorio" value="todo-processo">
+                                    <span>Todo o processo</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="periodo-relatorio" value="personalizado">
+                                    <span>Intervalo personalizado</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="intervalo-personalizado" style="display: none;">
+                        <div class="form-group">
+                            <label for="data-inicio">Data Início</label>
+                            <input type="date" id="data-inicio">
+                        </div>
+                        <div class="form-group">
+                            <label for="data-fim">Data Fim</label>
+                            <input type="date" id="data-fim">
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-outline">Gerar Relatório PDF</button>
+                        <button class="btn btn-outline">Exportar Excel</button>
+                        <button class="btn btn-outline">Ver Gráfico</button>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="form-actions">
+                    <button class="btn btn-primary">Salvar Registros</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="acompanhamento.js"></script>
+</body>
+</html>

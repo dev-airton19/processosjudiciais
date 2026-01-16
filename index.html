@@ -3,431 +3,1126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Processos Judiciais</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Protótipo - Controle de Processos</title>
+    <style>
+        :root {
+            --primary: #92400e;
+            --primary-light: #fef3c7;
+            --bg: #f9fafb;
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border-top: 6px solid var(--primary);
+        }
+
+        .icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        h1 {
+            margin: 0 0 1rem;
+            font-size: 1.75rem;
+            color: #111;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #4b5563;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #78350f;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        #status {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            min-height: 1.5rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- Cabeçalho -->
-        <header class="header">
-            <h1>Controle de Processos Judiciais</h1>
-            <p class="subtitle">Sistema de Gestão Processual</p>
-        </header>
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+        </svg>
+        
+        <h1>Controle de Processos</h1>
+        <span class="badge">Protótipo de Teste v0.1</span>
+        
+        <p>
+            Bem-vindo ao ambiente de desenvolvimento.<br>
+            Este sistema é um protótipo para validação de fluxos e interface.
+            Os dados aqui inseridos são temporários.
+        </p>
 
-        <!-- Conteúdo das Seções -->
-        <div class="content-wrapper">
-            
-            <!-- ========== SEÇÃO 1: DADOS DO PROCESSO ========== -->
-            <section id="section-dados" class="content-section">
-                <h2 class="section-title">Dados do Processo</h2>
-                
-                <form id="form-dados-processo" class="form-section">
-                    
-                    <!-- Seção: Identificação -->
-                    <div class="form-group-section">
-                        <h3 class="section-subtitle">Identificação do Processo</h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="numero-processo">Número do Processo (CNJ)</label>
-                                <input type="text" id="numero-processo" placeholder="0000000-00.0000.0.00.0000">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="comarca">Comarca / Vara</label>
-                                <input type="text" id="comarca" placeholder="Ex: 1ª Vara Cível da Comarca de São Paulo">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="orgao">Órgão / Tribunal</label>
-                                <input type="text" id="orgao" placeholder="Ex: TJSP, STF, TRT">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="classe-processual">Classe Processual</label>
-                                <select id="classe-processual">
-                                    <option value="">Selecione...</option>
-                                    <option value="Ação Civil Pública">Ação Civil Pública</option>
-                                    <option value="Ação de Cobrança">Ação de Cobrança</option>
-                                    <option value="Ação de Indenização">Ação de Indenização</option>
-                                    <option value="Ação Ordinária">Ação Ordinária</option>
-                                    <option value="Procedimento Comum">Procedimento Comum</option>
-                                    <option value="Ação de Alimentos">Ação de Alimentos</option>
-                                    <option value="Ação Penal Pública">Ação Penal Pública</option>
-                                    <option value="Habeas Corpus">Habeas Corpus</option>
-                                    <option value="Reclamação Trabalhista">Reclamação Trabalhista</option>
-                                    <option value="Agravo de Instrumento">Agravo de Instrumento</option>
-                                    <option value="Recurso Inominado">Recurso Inominado</option>
-                                    <option value="Outros">Outros</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Campo condicional: aparece quando "Outros" é selecionado -->
-                        <div class="form-row" id="outros-classe-row" style="display: none;">
-                            <div class="form-group">
-                                <label for="especificar-classe">Especificar Classe</label>
-                                <input type="text" id="especificar-classe" placeholder="Digite a classe processual">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="natureza-juridica">Natureza Jurídica</label>
-                                <input type="text" id="natureza-juridica" placeholder="Ex: Direito Civil, Penal, Trabalhista">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="valor-causa">Valor da Causa (R$)</label>
-                                <input type="text" id="valor-causa" placeholder="0,00">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Seção: Partes -->
-                    <div class="form-group-section">
-                        <h3 class="section-subtitle">Partes Envolvidas</h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="autor">Autor(es)</label>
-                                <textarea id="autor" rows="3" placeholder="Nome completo do(s) autor(es)"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="reu">Réu(s)</label>
-                                <textarea id="reu" rows="3" placeholder="Nome completo do(s) réu(s)"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="advogado">Advogado(s) Responsável(eis)</label>
-                                <textarea id="advogado" rows="3" placeholder="Nome e OAB do(s) advogado(s)"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Seção: Status e Documentos -->
-                    <div class="form-group-section">
-                        <h3 class="section-subtitle">Status e Documentação</h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="data-ajuizamento">Data de Ajuizamento</label>
-                                <input type="date" id="data-ajuizamento">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="situacao-atual">Situação Atual</label>
-                                <select id="situacao-atual">
-                                    <option value="">Selecione...</option>
-                                    <option value="Em andamento">Em andamento</option>
-                                    <option value="Aguardando julgamento">Aguardando julgamento</option>
-                                    <option value="Suspenso">Suspenso</option>
-                                    <option value="Sentenciado">Sentenciado</option>
-                                    <option value="Em recurso">Em recurso</option>
-                                    <option value="Arquivado">Arquivado</option>
-                                    <option value="Baixado">Baixado</option>
-                                    <option value="Outros">Outros</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Campo condicional: aparece quando "Outros" é selecionado em Situação -->
-                        <div class="form-row" id="outros-situacao-row" style="display: none;">
-                            <div class="form-group">
-                                <label for="especificar-situacao">Especificar Situação</label>
-                                <input type="text" id="especificar-situacao" placeholder="Digite a situação atual">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="upload-documentos">Upload de Documentos</label>
-                                <div class="file-upload-wrapper">
-                                    <input type="file" id="upload-documentos" multiple>
-                                    <label for="upload-documentos" class="file-upload-label">
-                                        Escolher arquivos ou arraste aqui
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botões de Ação -->
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                        <button type="reset" class="btn btn-secondary">Limpar Formulário</button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- ========== SEÇÃO 2: SITUAÇÃO E ACOMPANHAMENTO ========== -->
-            <section id="section-situacao" class="content-section">
-                <h2 class="section-title">Situação e Acompanhamento</h2>
-
-                <!-- Histórico de Andamentos -->
-                <div class="form-group-section">
-                    <div class="section-header">
-                        <h3 class="section-subtitle">Histórico de Andamentos</h3>
-                        <button class="btn btn-small btn-primary" id="btn-add-andamento">+ Adicionar Novo Andamento</button>
-                    </div>
-                    
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Descrição do Andamento</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-andamentos">
-                                <tr>
-                                    <td>10/01/2026</td>
-                                    <td>Petição inicial distribuída</td>
-                                    <td><button class="btn btn-link">Ver PDF</button></td>
-                                </tr>
-                                <tr>
-                                    <td>12/01/2026</td>
-                                    <td>Citação do réu realizada</td>
-                                    <td><button class="btn btn-link">Ver PDF</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Alertas e Prazos -->
-                <div class="form-group-section">
-                    <h3 class="section-subtitle">Alertas e Prazos</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipo-prazo">Tipo de Prazo</label>
-                            <input type="text" id="tipo-prazo" placeholder="Ex: Contestação, Recurso, Audiência">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="data-limite">Data Limite</label>
-                            <input type="date" id="data-limite">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="descricao-prazo">Descrição</label>
-                            <textarea id="descricao-prazo" rows="3" placeholder="Descreva o prazo ou alerta"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group checkbox-group">
-                            <label>
-                                <input type="checkbox" id="notificar-email">
-                                <span>Notificar por e-mail</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Observações Técnicas -->
-                <div class="form-group-section">
-                    <h3 class="section-subtitle">Observações Técnicas</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <textarea id="observacoes-tecnicas" rows="6" placeholder="Digite observações técnicas sobre o processo..."></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Providências a Serem Tomadas -->
-                <div class="form-group-section">
-                    <div class="section-header">
-                        <h3 class="section-subtitle">Providências a Serem Tomadas</h3>
-                        <button class="btn btn-small btn-primary" id="btn-add-providencia">+ Nova Providência</button>
-                    </div>
-                    
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Ação</th>
-                                    <th>Responsável</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-providencias">
-                                <tr>
-                                    <td>Elaborar contestação</td>
-                                    <td>Dr. João Silva</td>
-                                    <td>
-                                        <select class="status-select">
-                                            <option value="Pendente">Pendente</option>
-                                            <option value="Em andamento" selected>Em andamento</option>
-                                            <option value="Concluído">Concluído</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Botões de Ação -->
-                <div class="form-actions">
-                    <button class="btn btn-primary">Salvar Andamentos</button>
-                </div>
-            </section>
-
-            <!-- ========== SEÇÃO 3: ACOMPANHAMENTO FINANCEIRO ========== -->
-            <section id="section-financeiro" class="content-section">
-                <h2 class="section-title">Acompanhamento Financeiro</h2>
-
-                <!-- Honorários Contratuais -->
-                <div class="form-group-section">
-                    <div class="section-header">
-                        <h3 class="section-subtitle">Honorários Contratuais</h3>
-                        <button class="btn btn-small btn-primary" id="btn-add-honorario-contratual">+ Adicionar Honorário Contratual</button>
-                    </div>
-                    
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Descrição</th>
-                                    <th>Valor (R$)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-honorarios-contratuais">
-                                <tr>
-                                    <td>05/01/2026</td>
-                                    <td>Entrada do processo</td>
-                                    <td>R$ 5.000,00</td>
-                                </tr>
-                                <tr>
-                                    <td>15/01/2026</td>
-                                    <td>Segunda parcela</td>
-                                    <td>R$ 3.000,00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Honorários Sucumbenciais -->
-                <div class="form-group-section">
-                    <div class="section-header">
-                        <h3 class="section-subtitle">Honorários Sucumbenciais</h3>
-                        <button class="btn btn-small btn-primary" id="btn-add-honorario-sucumbencial">+ Adicionar Honorário Sucumbencial</button>
-                    </div>
-                    
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Fonte</th>
-                                    <th>Valor (R$)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-honorarios-sucumbenciais">
-                                <tr>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Honorários a Receber -->
-                <div class="form-group-section">
-                    <div class="section-header">
-                        <h3 class="section-subtitle">Honorários a Receber (Previsão)</h3>
-                        <button class="btn btn-small btn-primary" id="btn-add-previsao">+ Adicionar Previsão de Recebimento</button>
-                    </div>
-                    
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Data Prevista</th>
-                                    <th>Tipo</th>
-                                    <th>Descrição</th>
-                                    <th>Valor (R$)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-previsoes">
-                                <tr>
-                                    <td>30/01/2026</td>
-                                    <td>Contratual</td>
-                                    <td>Terceira parcela</td>
-                                    <td>R$ 2.000,00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Relatórios Financeiros -->
-                <div class="form-group-section">
-                    <h3 class="section-subtitle">Relatórios Financeiros</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Período do Relatório</label>
-                            <div class="radio-group">
-                                <label>
-                                    <input type="radio" name="periodo-relatorio" value="mes-atual" checked>
-                                    <span>Mês atual</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="periodo-relatorio" value="todo-processo">
-                                    <span>Todo o processo</span>
-                                </label>
-                                <label>
-                                    <input type="radio" name="periodo-relatorio" value="personalizado">
-                                    <span>Intervalo personalizado</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row" id="intervalo-personalizado" style="display: none;">
-                        <div class="form-group">
-                            <label for="data-inicio">Data Início</label>
-                            <input type="date" id="data-inicio">
-                        </div>
-                        <div class="form-group">
-                            <label for="data-fim">Data Fim</label>
-                            <input type="date" id="data-fim">
-                        </div>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-outline">Gerar Relatório PDF</button>
-                        <button class="btn btn-outline">Exportar Excel</button>
-                        <button class="btn btn-outline">Ver Gráfico</button>
-                    </div>
-                </div>
-
-                <!-- Botões de Ação -->
-                <div class="form-actions">
-                    <button class="btn btn-primary">Salvar Registros</button>
-                </div>
-            </section>
+        <div class="actions">
+            <a href="dashboard.html" class="btn btn-primary">Acessar Dashboard</a>
+            <button onclick="gerarDados()" class="btn btn-secondary">Regenerar Dados de Exemplo</button>
         </div>
+
+        <div id="status"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Dados de exemplo de processos
+        const processosExemplo = [
+            {
+                id: 1,
+                numeroProcesso: "0001234-56.2025.8.26.0100",
+                comarca: "1ª Vara Cível da Comarca de São Paulo",
+                autor: "Maria da Silva Santos",
+                reu: "Empresa XYZ Ltda",
+                objeto: "Ação de Cobrança",
+                valorCausa: "R$ 50.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2025-01-10",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2025-01-10",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-12",
+                        descricao: "Citação do réu realizada",
+                        responsavel: "Dr. João Silva"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para apresentação de contestação",
+                        dataLimite: "2026-01-20",
+                        observacoes: "Prazo de 15 dias após a citação"
+                    },
+                    {
+                        id: 2,
+                        descricao: "Prazo para juntada de documentos complementares",
+                        dataLimite: "2026-01-16",
+                        observacoes: "Conforme despacho do juiz"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - entrada",
+                        valor: "R$ 8.000,00",
+                        data: "2025-01-10",
+                        status: "Pago"
+                    },
+                    {
+                        id: 2,
+                        descricao: "Honorários contratuais - parcela 2/3",
+                        valor: "R$ 7.000,00",
+                        data: "2025-02-10",
+                        status: "Aguardando"
+                    }
+                ],
+                previsoesRecebimento: [
+                    {
+                        id: 1,
+                        descricao: "Honorários êxito - 30% sobre valor recuperado",
+                        valor: "R$ 15.000,00",
+                        dataPrevisao: "2025-06-15",
+                        observacoes: "Estimativa com base no andamento"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                numeroProcesso: "0002345-67.2025.8.26.0200",
+                comarca: "2ª Vara de Família da Comarca de Campinas",
+                autor: "João Pedro Oliveira",
+                reu: "Ana Paula Oliveira",
+                objeto: "Ação de Divórcio",
+                valorCausa: "R$ 0,00",
+                situacaoAtual: "Aguardando julgamento",
+                dataDistribuicao: "2024-11-05",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-11-05",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-11-20",
+                        descricao: "Audiência de conciliação realizada",
+                        responsavel: "Dra. Maria Santos"
+                    },
+                    {
+                        id: 3,
+                        data: "2024-12-15",
+                        descricao: "Prazo para contestação encerrado",
+                        responsavel: "Cartório"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para recurso - Audiência designada",
+                        dataLimite: "2026-01-15",
+                        observacoes: "Aguardando designação de nova audiência"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - divórcio",
+                        valor: "R$ 5.000,00",
+                        data: "2024-11-05",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                numeroProcesso: "0003456-78.2024.8.26.0300",
+                comarca: "3ª Vara do Trabalho de São Bernardo do Campo",
+                autor: "Carlos Eduardo Ferreira",
+                reu: "Indústria ABC S.A.",
+                objeto: "Ação Trabalhista - Verbas Rescisórias",
+                valorCausa: "R$ 125.000,00",
+                situacaoAtual: "Sentenciado",
+                dataDistribuicao: "2024-03-15",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-03-15",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-04-10",
+                        descricao: "Audiência inicial realizada",
+                        responsavel: "Dr. Roberto Lima"
+                    },
+                    {
+                        id: 3,
+                        data: "2024-06-20",
+                        descricao: "Perícia técnica concluída",
+                        responsavel: "Perito José Silva"
+                    },
+                    {
+                        id: 4,
+                        data: "2025-01-08",
+                        descricao: "Sentença proferida - Procedente",
+                        responsavel: "Juiz Dr. Paulo Costa"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para recurso da sentença",
+                        dataLimite: "2026-01-12",
+                        observacoes: "Prazo de 8 dias após publicação da sentença"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários advocatícios contratuais - 20%",
+                        valor: "R$ 25.000,00",
+                        data: "2024-03-15",
+                        status: "Pago"
+                    }
+                ],
+                honorariosSucumbenciais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários de sucumbência - 15% sobre o valor da causa",
+                        valor: "R$ 18.750,00",
+                        dataPrevisao: "2025-03-10",
+                        status: "Aguardando"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                numeroProcesso: "0004567-89.2023.8.26.0400",
+                comarca: "4ª Vara Criminal de Santos",
+                autor: "Ministério Público",
+                reu: "Ricardo Alves Mendes",
+                objeto: "Ação Penal - Furto Qualificado",
+                valorCausa: "Sem valor econômico",
+                situacaoAtual: "Arquivado",
+                dataDistribuicao: "2023-08-22",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2023-08-22",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2023-09-30",
+                        descricao: "Denúncia oferecida",
+                        responsavel: "Promotor de Justiça"
+                    },
+                    {
+                        id: 3,
+                        data: "2024-02-15",
+                        descricao: "Audiência de instrução realizada",
+                        responsavel: "Juiz Titular"
+                    },
+                    {
+                        id: 4,
+                        data: "2024-11-30",
+                        descricao: "Processo arquivado - Extinção da punibilidade",
+                        responsavel: "Juiz Dr. Fernando Pires"
+                    }
+                ]
+            },
+            {
+                id: 5,
+                numeroProcesso: "0005678-90.2025.8.26.0500",
+                comarca: "1ª Vara Empresarial de Guarulhos",
+                autor: "Empresa Tech Solutions Ltda",
+                reu: "Fornecedor Digital EIRELI",
+                objeto: "Ação de Rescisão Contratual",
+                valorCausa: "R$ 280.000,00",
+                situacaoAtual: "Suspenso",
+                dataDistribuicao: "2025-01-05",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2025-01-05",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-08",
+                        descricao: "Liminar deferida - Suspensão do contrato",
+                        responsavel: "Juíza Dra. Patricia Mendes"
+                    },
+                    {
+                        id: 3,
+                        data: "2025-01-14",
+                        descricao: "Processo suspenso por acordo entre as partes",
+                        responsavel: "Cartório"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para homologação do acordo",
+                        dataLimite: "2025-01-22",
+                        observacoes: "Partes devem protocolar acordo por escrito"
+                    },
+                    {
+                        id: 2,
+                        descricao: "Prazo para manifestação sobre perícia contábil",
+                        dataLimite: "2025-02-05",
+                        observacoes: "Caso não haja acordo"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - 10% do valor da causa",
+                        valor: "R$ 28.000,00",
+                        data: "2025-01-05",
+                        status: "Pago"
+                    }
+                ],
+                previsoesRecebimento: [
+                    {
+                        id: 1,
+                        descricao: "Honorários êxito caso acordo seja firmado",
+                        valor: "R$ 42.000,00",
+                        dataPrevisao: "2025-03-20",
+                        observacoes: "Previsão baseada em negociações"
+                    }
+                ]
+            },
+            {
+                id: 6,
+                numeroProcesso: "0006789-01.2024.8.26.0600",
+                comarca: "2ª Vara Cível de Osasco",
+                autor: "Pedro Henrique Costa",
+                reu: "Banco Financeiro S.A.",
+                objeto: "Revisão de Contrato Bancário",
+                valorCausa: "R$ 85.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2024-09-18",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-09-18",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-10-05",
+                        descricao: "Banco apresentou contestação",
+                        responsavel: "Advogado do réu"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para réplica à contestação",
+                        dataLimite: "2026-01-17",
+                        observacoes: "Urgente - 10 dias"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - revisional",
+                        valor: "R$ 12.000,00",
+                        data: "2024-09-18",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 7,
+                numeroProcesso: "0007890-12.2024.8.26.0700",
+                comarca: "Vara da Fazenda Pública de Santo André",
+                autor: "Luciana Aparecida Rocha",
+                reu: "Prefeitura Municipal de Santo André",
+                objeto: "Mandado de Segurança - Concurso",
+                valorCausa: "Sem valor econômico",
+                situacaoAtual: "Aguardando julgamento",
+                dataDistribuicao: "2024-07-12",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-07-12",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-07-15",
+                        descricao: "Liminar indeferida",
+                        responsavel: "Juiz Titular"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais",
+                        valor: "R$ 18.000,00",
+                        data: "2024-07-12",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 8,
+                numeroProcesso: "0008901-23.2024.8.26.0800",
+                comarca: "5ª Vara Cível de Ribeirão Preto",
+                autor: "Fernanda Martins Souza",
+                reu: "Seguradora Nacional S.A.",
+                objeto: "Indenização por Danos Materiais",
+                valorCausa: "R$ 42.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2024-10-22",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-10-22",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-11-15",
+                        descricao: "Contestação apresentada",
+                        responsavel: "Dr. Alberto Gomes"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - seguro",
+                        valor: "R$ 6.500,00",
+                        data: "2024-10-22",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 9,
+                numeroProcesso: "0009012-34.2025.8.26.0900",
+                comarca: "Vara de Acidentes do Trabalho de Sorocaba",
+                autor: "Roberto Carlos Dias",
+                reu: "Construtora Forte Ltda",
+                objeto: "Ação Acidentária - Indenização",
+                valorCausa: "R$ 200.000,00",
+                situacaoAtual: "Sentenciado",
+                dataDistribuicao: "2024-05-10",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-05-10",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-10",
+                        descricao: "Sentença proferida",
+                        responsavel: "Juíza Claudia Torres"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - acidentária",
+                        valor: "R$ 15.000,00",
+                        data: "2024-05-10",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 10,
+                numeroProcesso: "0010123-45.2024.8.26.1000",
+                comarca: "1ª Vara de Família de Bauru",
+                autor: "Juliana Costa Almeida",
+                reu: "Marcos Antonio Almeida",
+                objeto: "Ação de Alimentos",
+                valorCausa: "R$ 0,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2024-12-05",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-12-05",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-12-18",
+                        descricao: "Alimentos provisórios fixados",
+                        responsavel: "Juiz Fernando Dias"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - alimentos",
+                        valor: "R$ 3.500,00",
+                        data: "2024-12-05",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 11,
+                numeroProcesso: "0011234-56.2024.8.26.1100",
+                comarca: "2ª Vara Empresarial de São José dos Campos",
+                autor: "Inovação Tech Ltda",
+                reu: "StartUp Digital ME",
+                objeto: "Dissolução de Sociedade",
+                valorCausa: "R$ 450.000,00",
+                situacaoAtual: "Suspenso",
+                dataDistribuicao: "2024-08-15",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-08-15",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-05",
+                        descricao: "Suspenso - Negociação extrajudicial",
+                        responsavel: "Dra. Beatriz Lima"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - dissolução",
+                        valor: "R$ 35.000,00",
+                        data: "2024-08-15",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 12,
+                numeroProcesso: "0012345-67.2024.8.26.1200",
+                comarca: "3ª Vara Cível de Piracicaba",
+                autor: "Antônio José Barbosa",
+                reu: "Hospital Santa Casa",
+                objeto: "Indenização por Erro Médico",
+                valorCausa: "R$ 350.000,00",
+                situacaoAtual: "Aguardando julgamento",
+                dataDistribuicao: "2024-06-20",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-06-20",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-08-10",
+                        descricao: "Contestação juntada",
+                        responsavel: "Advogado do réu"
+                    },
+                    {
+                        id: 3,
+                        data: "2024-11-05",
+                        descricao: "Laudo pericial conclusivo",
+                        responsavel: "Perito Rafael Santos"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - erro médico",
+                        valor: "R$ 25.000,00",
+                        data: "2024-06-20",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 13,
+                numeroProcesso: "0013456-78.2024.8.26.1300",
+                comarca: "Juizado Especial Cível de Jundiaí",
+                autor: "Patrícia Fernandes Lima",
+                reu: "Loja de Móveis Online Ltda",
+                objeto: "Defeito do Produto - CDC",
+                valorCausa: "R$ 8.500,00",
+                situacaoAtual: "Sentenciado",
+                dataDistribuicao: "2024-09-10",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-09-10",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-12-20",
+                        descricao: "Sentença - Procedente",
+                        responsavel: "Juiz Leigo"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - juizado",
+                        valor: "R$ 2.500,00",
+                        data: "2024-09-10",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 14,
+                numeroProcesso: "0014567-89.2024.8.26.1400",
+                comarca: "Vara Única de Mogi Guaçu",
+                autor: "Transportadora Rápida Ltda",
+                reu: "Indústria de Alimentos ABC",
+                objeto: "Cobrança de Frete",
+                valorCausa: "R$ 75.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2024-11-28",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-11-28",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-12-20",
+                        descricao: "Citação realizada",
+                        responsavel: "Oficial de Justiça"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - cobrança",
+                        valor: "R$ 10.000,00",
+                        data: "2024-11-28",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 15,
+                numeroProcesso: "0015678-90.2023.8.26.1500",
+                comarca: "2ª Vara Criminal de Campinas",
+                autor: "Ministério Público do Estado",
+                reu: "Anderson Silva Pereira",
+                objeto: "Lesão Corporal - Lei Maria da Penha",
+                valorCausa: "Sem valor econômico",
+                situacaoAtual: "Sentenciado",
+                dataDistribuicao: "2023-10-15",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2023-10-15",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-12-15",
+                        descricao: "Sentença condenatória",
+                        responsavel: "Juiz Paulo Martins"
+                    }
+                ]
+            },
+            {
+                id: 16,
+                numeroProcesso: "0016789-01.2024.8.26.1600",
+                comarca: "4ª Vara Cível de São Paulo",
+                autor: "Gabriel Rodrigues Santos",
+                reu: "Operadora de Telefonia XYZ",
+                objeto: "Cobrança Indevida - Danos Morais",
+                valorCausa: "R$ 15.000,00",
+                situacaoAtual: "Aguardando julgamento",
+                dataDistribuicao: "2024-08-05",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-08-05",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-11-20",
+                        descricao: "Alegações finais",
+                        responsavel: "Advogado do autor"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - danos morais",
+                        valor: "R$ 3.000,00",
+                        data: "2024-08-05",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 17,
+                numeroProcesso: "0017890-12.2024.8.26.1700",
+                comarca: "1ª Vara do Trabalho de Santos",
+                autor: "Márcia Helena Costa",
+                reu: "Empresa de Limpeza Top Clean",
+                objeto: "Ação Trabalhista - Horas Extras",
+                valorCausa: "R$ 45.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2024-10-01",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-10-01",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-08",
+                        descricao: "Perícia técnica determinada",
+                        responsavel: "Cartório"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - trabalhista",
+                        valor: "R$ 8.000,00",
+                        data: "2024-10-01",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 18,
+                numeroProcesso: "0018901-23.2024.8.26.1800",
+                comarca: "Vara de Registros Públicos de São Paulo",
+                autor: "Construtora Nova Era S.A.",
+                reu: "Cartório de Registro de Imóveis",
+                objeto: "Retificação de Área - Registro",
+                valorCausa: "Sem valor econômico",
+                situacaoAtual: "Arquivado",
+                dataDistribuicao: "2024-03-10",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-03-10",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-07-20",
+                        descricao: "Processo arquivado",
+                        responsavel: "Cartório"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - retificação",
+                        valor: "R$ 12.500,00",
+                        data: "2024-03-10",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 19,
+                numeroProcesso: "0019012-34.2025.8.26.1900",
+                comarca: "3ª Vara de Família de Guarulhos",
+                autor: "Rafael Souza Oliveira",
+                reu: "Amanda Cristina Oliveira",
+                objeto: "Regulamentação de Visitas",
+                valorCausa: "R$ 0,00",
+                situacaoAtual: "Suspenso",
+                dataDistribuicao: "2025-01-03",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2025-01-03",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-10",
+                        descricao: "Suspenso para acompanhamento",
+                        responsavel: "Juíza Sandra Matos"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - visitas",
+                        valor: "R$ 4.000,00",
+                        data: "2025-01-03",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 20,
+                numeroProcesso: "0020123-45.2024.8.26.2000",
+                comarca: "Juizado Especial Federal de São Paulo",
+                autor: "Sebastião Martins Pereira",
+                reu: "Instituto Nacional do Seguro Social",
+                objeto: "Revisão de Benefício Previdenciário",
+                valorCausa: "R$ 0,00",
+                situacaoAtual: "Aguardando julgamento",
+                dataDistribuicao: "2024-07-30",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-07-30",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-12",
+                        descricao: "Processo concluso para sentença",
+                        responsavel: "Cartório"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - INSS",
+                        valor: "R$ 8.200,00",
+                        data: "2024-07-30",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 21,
+                numeroProcesso: "0021234-56.2025.8.26.2100",
+                comarca: "1ª Vara Cível de Tatuí",
+                autor: "Renato da Silva Santos",
+                reu: "Comércio de Materiais XYZ",
+                objeto: "Ação de Rescisão Contratual",
+                valorCausa: "R$ 95.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2025-01-08",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2025-01-08",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para citação do réu",
+                        dataLimite: "2026-01-22",
+                        observacoes: "Início do prazo para contestação"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - entrada",
+                        valor: "R$ 15.000,00",
+                        data: "2025-01-08",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 22,
+                numeroProcesso: "0022345-67.2025.8.26.2200",
+                comarca: "2ª Vara Cível de Araçatuba",
+                autor: "Vitória Costa Ribeiro",
+                reu: "Fornecedor de Insumos Agrícolas",
+                objeto: "Cobrança de Débito",
+                valorCausa: "R$ 52.000,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2024-12-10",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-12-10",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2025-01-05",
+                        descricao: "Citação realizada",
+                        responsavel: "Oficial de Justiça"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais - cobrança",
+                        valor: "R$ 8.000,00",
+                        data: "2024-12-10",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 23,
+                numeroProcesso: "0023456-78.2025.8.26.2300",
+                comarca: "1ª Vara de Família de Jau",
+                autor: "Gisele Mendes Costa",
+                reu: "Marcelo Antonio Costa",
+                objeto: "Pensão Alimentícia",
+                valorCausa: "R$ 0,00",
+                situacaoAtual: "Em andamento",
+                dataDistribuicao: "2025-01-06",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2025-01-06",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    }
+                ],
+                prazos: [
+                    {
+                        id: 1,
+                        descricao: "Prazo para manifestação do réu",
+                        dataLimite: "2026-02-06",
+                        observacoes: "30 dias para resposta"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais",
+                        valor: "R$ 4.500,00",
+                        data: "2025-01-06",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 24,
+                numeroProcesso: "0024567-89.2024.8.26.2400",
+                comarca: "3ª Vara do Trabalho de Araraquara",
+                autor: "Luciano Pedroso Silva",
+                reu: "Metalúrgica Industrial Ltda",
+                objeto: "Ação Trabalhista - Equipamento de Proteção",
+                valorCausa: "R$ 38.000,00",
+                situacaoAtual: "Sentenciado",
+                dataDistribuicao: "2024-08-22",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-08-22",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-12-10",
+                        descricao: "Sentença publicada",
+                        responsavel: "Juiz do Trabalho"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais",
+                        valor: "R$ 7.000,00",
+                        data: "2024-08-22",
+                        status: "Pago"
+                    }
+                ]
+            },
+            {
+                id: 25,
+                numeroProcesso: "0025678-90.2025.8.26.2500",
+                comarca: "Vara Cível de Catanduva",
+                autor: "Professora Cleide Oliveira",
+                reu: "Secretaria de Educação Municipal",
+                objeto: "Ação para Cumprimento de Acordo",
+                valorCausa: "R$ 18.000,00",
+                situacaoAtual: "Aguardando julgamento",
+                dataDistribuicao: "2024-11-15",
+                acompanhamentos: [
+                    {
+                        id: 1,
+                        data: "2024-11-15",
+                        descricao: "Processo distribuído",
+                        responsavel: "Sistema"
+                    },
+                    {
+                        id: 2,
+                        data: "2024-12-28",
+                        descricao: "Contestação apresentada",
+                        responsavel: "Procuradoria Geral"
+                    }
+                ],
+                honorariosContratuais: [
+                    {
+                        id: 1,
+                        descricao: "Honorários contratuais",
+                        valor: "R$ 3.500,00",
+                        data: "2024-11-15",
+                        status: "Pago"
+                    }
+                ]
+            }
+        ];
+
+        function gerarDados() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<span style="color: blue">Gerando dados...</span>';
+            
+            // Salvar no localStorage
+            localStorage.setItem('processos', JSON.stringify(processosExemplo));
+
+            // Atualizar status
+            setTimeout(() => {
+                statusDiv.innerHTML = '<span style="color: green">✓ Dados regenerados com sucesso!</span>';
+                
+                // Limpar msg após 3s
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 3000);
+            }, 500);
+        }
+
+        // Verificar se já tem dados ao carregar
+        if (!localStorage.getItem('processos')) {
+            gerarDados();
+        }
+    </script>
 </body>
 </html>

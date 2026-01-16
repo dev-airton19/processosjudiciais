@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Processo - Controle Judicial</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <header class="header">
+            <div class="header-top">
+                <button type="button" id="btn-voltar-listagem-cadastro" class="btn-voltar" title="Voltar para listagem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Voltar para Listagem
+                </button>
+            </div>
+            <h1>Novo Processo</h1>
+            <p class="subtitle">Cadastro de Dados do Processo</p>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="content-wrapper">
+            
+            <!-- DADOS DO PROCESSO -->
+            <section id="section-dados" class="content-section">
+                <h2 class="section-title">Dados do Processo</h2>
+                
+                <form id="form-cadastro-processo" class="form-section">
+                    
+                    <!-- Seção: Identificação -->
+                    <div class="form-group-section">
+                        <h3 class="section-subtitle">Identificação do Processo</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="numero-processo">Número do Processo (CNJ)</label>
+                                <input type="text" id="numero-processo" placeholder="0000000-00.0000.0.00.0000">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="comarca">Comarca / Vara</label>
+                                <input type="text" id="comarca" placeholder="Ex: 1ª Vara Cível da Comarca de São Paulo">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orgao">Órgão / Tribunal</label>
+                                <input type="text" id="orgao" placeholder="Ex: TJSP, STF, TRT">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="classe-processual">Classe Processual</label>
+                                <select id="classe-processual">
+                                    <option value="">Selecione...</option>
+                                    <option value="Ação Civil Pública">Ação Civil Pública</option>
+                                    <option value="Ação de Cobrança">Ação de Cobrança</option>
+                                    <option value="Ação de Indenização">Ação de Indenização</option>
+                                    <option value="Ação Ordinária">Ação Ordinária</option>
+                                    <option value="Procedimento Comum">Procedimento Comum</option>
+                                    <option value="Ação de Alimentos">Ação de Alimentos</option>
+                                    <option value="Ação Penal Pública">Ação Penal Pública</option>
+                                    <option value="Habeas Corpus">Habeas Corpus</option>
+                                    <option value="Reclamação Trabalhista">Reclamação Trabalhista</option>
+                                    <option value="Agravo de Instrumento">Agravo de Instrumento</option>
+                                    <option value="Recurso Inominado">Recurso Inominado</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campo condicional: aparece quando "Outros" é selecionado -->
+                        <div class="form-row" id="outros-classe-row" style="display: none;">
+                            <div class="form-group">
+                                <label for="especificar-classe">Especificar Classe</label>
+                                <input type="text" id="especificar-classe" placeholder="Digite a classe processual">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="natureza-juridica">Natureza Jurídica</label>
+                                <input type="text" id="natureza-juridica" placeholder="Ex: Direito Civil, Penal, Trabalhista">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="valor-causa">Valor da Causa (R$)</label>
+                                <input type="text" id="valor-causa" placeholder="0,00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção: Partes -->
+                    <div class="form-group-section">
+                        <h3 class="section-subtitle">Partes Envolvidas</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="autor">Autor(es)</label>
+                                <textarea id="autor" rows="3" placeholder="Nome completo do(s) autor(es)"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reu">Réu(s)</label>
+                                <textarea id="reu" rows="3" placeholder="Nome completo do(s) réu(s)"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="advogado">Advogado(s) Responsável(eis)</label>
+                                <textarea id="advogado" rows="3" placeholder="Nome e OAB do(s) advogado(s)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção: Status e Documentos -->
+                    <div class="form-group-section">
+                        <h3 class="section-subtitle">Status e Documentação</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="data-ajuizamento">Data de Ajuizamento</label>
+                                <input type="date" id="data-ajuizamento">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="situacao-atual">Situação Atual</label>
+                                <select id="situacao-atual">
+                                    <option value="">Selecione...</option>
+                                    <option value="Em andamento">Em andamento</option>
+                                    <option value="Aguardando julgamento">Aguardando julgamento</option>
+                                    <option value="Suspenso">Suspenso</option>
+                                    <option value="Sentenciado">Sentenciado</option>
+                                    <option value="Em recurso">Em recurso</option>
+                                    <option value="Arquivado">Arquivado</option>
+                                    <option value="Baixado">Baixado</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campo condicional: aparece quando "Outros" é selecionado em Situação -->
+                        <div class="form-row" id="outros-situacao-row" style="display: none;">
+                            <div class="form-group">
+                                <label for="especificar-situacao">Especificar Situação</label>
+                                <input type="text" id="especificar-situacao" placeholder="Digite a situação atual">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="upload-documentos">Upload de Documentos</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="upload-documentos" multiple>
+                                    <label for="upload-documentos" class="file-upload-label">
+                                        Escolher arquivos ou arraste aqui
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Cadastrar Processo</button>
+                        <button type="reset" class="btn btn-secondary">Limpar Formulário</button>
+                    </div>
+                </form>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="cadastro.js"></script>
+</body>
+</html>
