@@ -1,0 +1,430 @@
+/* ========================================
+   ESTILOS GERAIS E VARIÁVEIS
+======================================== */
+:root {
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --primary: #374151;
+    --border: #d1d5db;
+    --font-main: 'Segoe UI', 'Inter', 'Roboto', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ========================================
+   CENTRALIZAÇÃO E LAYOUT
+======================================== */
+.login-container {
+    flex: 1; /* Ocupa todo o espaço vertical disponível */
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    width: 100%;
+    padding: 40px 20px; /* Margem de segurança para não colar nas bordas */
+}
+
+.login-wrapper {
+    display: flex;
+    align-items: stretch; /* Faz as duas caixas terem a mesma altura */
+    gap: 0; /* Sem espaço entre elas para parecerem conectadas */
+    max-width: 850px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3); /* Sombra unificada */
+    border-radius: 12px;
+    overflow: hidden; /* Garante que os cantos arredondados funcionem */
+}
+
+/* ========================================
+   CAIXA DE LOGIN (ESQUERDA)
+======================================== */
+.login-box {
+    background: white;
+    flex: 1.2; /* A caixa de login é ligeiramente maior que o painel */
+    padding: 40px 50px;
+    text-align: center;
+    border-top: 5px solid var(--primary);
+}
+
+.login-logo {
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.login-box h2 {
+    color: var(--gray-800);
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 12px 12px 45px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: var(--gray-50);
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.login-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+.login-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ========================================
+   PAINEL DE TESTE (DIREITA)
+======================================== */
+.test-access-panel {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.15); /* Efeito de vidro */
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    border-left: 1px solid rgba(255,255,255,0.1);
+}
+
+.test-access-panel h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: white;
+    font-weight: 600;
+}
+
+.test-access-panel p {
+    font-size: 14px;
+    margin-bottom: 25px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.5;
+}
+
+.credentials-box {
+    background: rgba(0, 0, 0, 0.25);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.credential-item {
+    margin-bottom: 10px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.credential-item span {
+    color: rgba(255,255,255,0.6);
+}
+
+.test-access-panel small {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+}
+
+/* ========================================
+   MENSAGENS DE ERRO E SUCESSO
+======================================== */
+.error-message, .success-message {
+    display: none;
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: left;
+}
+
+.error-message.show, .success-message.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+.success-message {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #4ade80;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   RODAPÉ
+======================================== */
+.footer-bar {
+    width: 100%;
+    background: var(--gray-100);
+    border-top: 1px solid var(--gray-300);
+    padding: 8px 0;
+    margin-top: auto; /* Garante que fique no fundo */
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.footer-logo {
+    height: 60px; /* Tamanho reduzido para manter o rodapé fino */
+    width: auto;
+}
+
+.footer-content p {
+    color: var(--gray-600);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* ========================================
+   RESPONSIVIDADE (CELULAR)
+======================================== */
+@media (max-width: 1024px) {
+    .login-wrapper {
+        max-width: 700px;
+    }
+
+    .login-box {
+        padding: 30px 35px;
+    }
+
+    .test-access-panel {
+        padding: 30px 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        padding: 30px 15px;
+    }
+
+    .login-wrapper {
+        flex-direction: column;
+        max-width: 400px;
+        box-shadow: none;
+        gap: 20px;
+        background: transparent;
+    }
+
+    .login-box {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 30px 25px;
+        flex: 1;
+    }
+
+    .login-box h2 {
+        font-size: 20px;
+    }
+
+    .test-access-panel {
+        border-radius: 8px;
+        border-left: none;
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 25px;
+        flex: 1;
+    }
+
+    .test-access-panel h3 {
+        font-size: 16px;
+    }
+
+    .login-logo {
+        max-width: 150px;
+    }
+
+    .credential-item {
+        font-size: 13px;
+    }
+
+    .input-group input {
+        padding: 10px 10px 10px 40px;
+        font-size: 16px;
+    }
+
+    .btn-login {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .footer-bar {
+        padding: 15px;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .footer-logo {
+        max-width: 80px;
+    }
+
+    .footer-content p {
+        font-size: 11px;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px 10px;
+    }
+
+    .login-wrapper {
+        gap: 15px;
+    }
+
+    .login-box {
+        padding: 20px 15px;
+        border-radius: 6px;
+    }
+
+    .login-box h2 {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .input-group input {
+        padding: 10px 10px 10px 35px;
+        font-size: 16px;
+        border-radius: 5px;
+    }
+
+    .input-group i {
+        left: 12px;
+    }
+
+    .btn-login {
+        padding: 11px;
+        font-size: 15px;
+        margin-top: 10px;
+    }
+
+    .login-footer {
+        font-size: 12px;
+        gap: 8px;
+    }
+
+    .login-footer a {
+        font-size: 12px;
+    }
+
+    .test-access-panel {
+        padding: 15px;
+        border-radius: 6px;
+    }
+
+    .test-access-panel h3 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .test-access-panel p {
+        font-size: 12px;
+    }
+
+    .credentials-box {
+        gap: 10px;
+    }
+
+    .credential-item {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .test-access-panel small {
+        font-size: 11px;
+    }
+
+    .footer-logo {
+        max-width: 70px;
+    }
+
+    .footer-content p {
+        font-size: 10px;
+    }
+}

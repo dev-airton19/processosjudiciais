@@ -168,6 +168,321 @@
                         </div>
                     </div>
 
+                    <!-- ========== SEÇÃO: SITUAÇÃO E ACOMPANHAMENTO ========== -->
+                    <div class="form-group-section">
+                        <div class="section-header">
+                            <h3 class="section-subtitle">Situação e Acompanhamento</h3>
+                            <button class="btn btn-small btn-primary" id="btn-add-andamento">+ Adicionar Novo Andamento</button>
+                        </div>
+
+                        <!-- Histórico de Andamentos -->
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Descrição do Andamento</h3></th>
+                                        <th>Responsável</th>
+                                        <th style="width: 150px;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-andamentos">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #6b7280; padding: 40px;">Nenhum andamento cadastrado</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Alertas e Prazos -->
+                        <div class="section-header" style="margin-top: 24px;">
+                            <h3 class="section-subtitle">Alertas e Prazos</h3>
+                            <button class="btn btn-small btn-primary" id="btn-add-prazo">+ Novo Prazo</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <th>Data Limite</th>
+                                        <th>Dias Restantes</th>
+                                        <th style="width: 150px;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-prazos">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #6b7280;">Nenhum prazo cadastrado</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Observações Técnicas -->
+                        <div class="form-group" style="margin-top: 24px;">
+                            <label for="observacoes-tecnicas">Observações Técnicas</label>
+                            <textarea id="observacoes-tecnicas" rows="5" placeholder="Digite observações técnicas sobre o processo..."></textarea>
+                        </div>
+
+                        <!-- Providências -->
+                        <div class="section-header" style="margin-top: 24px;">
+                            <h3 class="section-subtitle">Providências a Serem Tomadas</h3>
+                            <button class="btn btn-small btn-primary" id="btn-add-providencia">+ Adicionar Providência</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tarefa</th>
+                                        <th>Quem Faz</th>
+                                        <th>Status</th>
+                                        <th style="width: 150px;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-providencias">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #6b7280;">Nenhuma providência cadastrada</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ========== SEÇÃO: ACOMPANHAMENTO FINANCEIRO ========== -->
+                    <div class="form-group-section">
+                        <div class="section-header">
+                            <h3 class="section-subtitle">Acompanhamento Financeiro</h3>
+                        </div>
+
+                        <!-- Honorários Contratuais -->
+                        <div class="section-header">
+                            <h3 class="section-subtitle">Honorários Contratuais</h3>
+                            <button class="btn btn-small btn-primary" id="btn-add-honorario-contratual">+ Adicionar Honorário Contratual</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Descrição</th>
+                                        <th>Valor (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-honorarios-contratuais">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; color: #6b7280;">Nenhum honorário cadastrado</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Honorários Sucumbenciais -->
+                        <div class="section-header" style="margin-top: 24px;">
+                            <h3 class="section-subtitle">Honorários Sucumbenciais</h3>
+                            <button class="btn btn-small btn-primary" id="btn-add-honorario-sucumbencial">+ Adicionar Honorário Sucumbencial</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Fonte</th>
+                                        <th>Valor (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-honorarios-sucumbenciais">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; color: #6b7280;">Nenhum honorário cadastrado</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Honorários a Receber -->
+                        <div class="section-header" style="margin-top: 24px;">
+                            <h3 class="section-subtitle">Honorários a Receber (Previsão)</h3>
+                            <button class="btn btn-small btn-primary" id="btn-add-previsao">+ Adicionar Previsão de Recebimento</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data Prevista</th>
+                                        <th>Tipo</th>
+                                        <th>Descrição</th>
+                                        <th>Valor (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-previsoes">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #6b7280;">Nenhuma previsão cadastrada</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Modais -->
+                    <div id="modal-andamento" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Novo Andamento</h3>
+                                <button class="modal-close" id="modal-close-andamento">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="andamento-data">Data do Andamento</label>
+                                    <input type="date" id="andamento-data" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="andamento-descricao">Descrição</label>
+                                    <textarea id="andamento-descricao" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="andamento-responsavel">Responsável</label>
+                                    <input type="text" id="andamento-responsavel" placeholder="Ex: Usuário"/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" id="btn-cancelar-andamento">Cancelar</button>
+                                <button class="btn btn-primary" id="btn-salvar-andamento">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modal-prazo" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Novo Prazo</h3>
+                                <button class="modal-close" id="modal-close-prazo">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="prazo-descricao">Descrição do Prazo</label>
+                                    <textarea id="prazo-descricao" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prazo-data">Data Limite</label>
+                                    <input type="date" id="prazo-data" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" id="btn-cancelar-prazo">Cancelar</button>
+                                <button class="btn btn-primary" id="btn-salvar-prazo">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modal-providencia" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Nova Providência</h3>
+                                <button class="modal-close" id="modal-close-providencia">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="providencia-tarefa">Tarefa</label>
+                                    <textarea id="providencia-tarefa" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="providencia-responsavel">Quem Faz</label>
+                                    <input type="text" id="providencia-responsavel" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" id="btn-cancelar-providencia">Cancelar</button>
+                                <button class="btn btn-primary" id="btn-salvar-providencia">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modal-honorario-contratual" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Novo Honorário Contratual</h3>
+                                <button class="modal-close" id="modal-close-honorario-contratual">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="hon-contratual-data">Data</label>
+                                    <input type="date" id="hon-contratual-data" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hon-contratual-descricao">Descrição</label>
+                                    <textarea id="hon-contratual-descricao" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hon-contratual-valor">Valor (R$)</label>
+                                    <input type="text" id="hon-contratual-valor" placeholder="0,00" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" id="btn-cancelar-honorario-contratual">Cancelar</button>
+                                <button class="btn btn-primary" id="btn-salvar-honorario-contratual">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modal-honorario-sucumbencial" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Novo Honorário Sucumbencial</h3>
+                                <button class="modal-close" id="modal-close-honorario-sucumbencial">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="hon-sucumbencial-data">Data</label>
+                                    <input type="date" id="hon-sucumbencial-data" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hon-sucumbencial-fonte">Fonte</label>
+                                    <input type="text" id="hon-sucumbencial-fonte" placeholder="Ex: Sentença/Acordo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hon-sucumbencial-valor">Valor (R$)</label>
+                                    <input type="text" id="hon-sucumbencial-valor" placeholder="0,00" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" id="btn-cancelar-honorario-sucumbencial">Cancelar</button>
+                                <button class="btn btn-primary" id="btn-salvar-honorario-sucumbencial">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modal-previsao" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Nova Previsão de Recebimento</h3>
+                                <button class="modal-close" id="modal-close-previsao">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="prev-data">Data Prevista</label>
+                                    <input type="date" id="prev-data" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prev-tipo">Tipo</label>
+                                    <select id="prev-tipo" required>
+                                        <option value="Contratual">Contratual</option>
+                                        <option value="Sucumbencial">Sucumbencial</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prev-descricao">Descrição</label>
+                                    <textarea id="prev-descricao" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prev-valor">Valor (R$)</label>
+                                    <input type="text" id="prev-valor" placeholder="0,00" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" id="btn-cancelar-previsao">Cancelar</button>
+                                <button class="btn btn-primary" id="btn-salvar-previsao">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Botões de Ação -->
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Cadastrar Processo</button>

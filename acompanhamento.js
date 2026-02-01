@@ -2,6 +2,15 @@
 // SISTEMA DE ACOMPANHAMENTO DE PROCESSOS
 // ========================================
 
+// Verificar autenticação antes de carregar
+(function verificarAutenticacao() {
+    const usuarioLogado = localStorage.getItem('usuarioLogado');
+    if (!usuarioLogado) {
+        window.location.href = 'login.html';
+        return;
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
     
     // ========================================

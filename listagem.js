@@ -1,1012 +1,843 @@
-// ========================================
-// SISTEMA DE LISTAGEM DE PROCESSOS
-// ========================================
-
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Elementos do DOM
+    // --- Referências DOM ---
+    const tableBody = document.getElementById('table-processos');
+    const totalProcessosSpan = document.getElementById('total-processos');
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search');
     const filterSituacao = document.getElementById('filter-situacao');
-    const btnNovoProcesso = document.getElementById('btn-novo-processo');
-    const btnAlertas = document.getElementById('btn-alertas');
-    const badgeAlertas = document.getElementById('badge-alertas');
-    const modalAlertas = document.getElementById('modal-alertas');
-    const btnFecharAlertas = document.getElementById('btn-fechar-alertas');
-    const listaAlertas = document.getElementById('lista-alertas');
-    const btnFinanceiro = document.getElementById('btn-financeiro');
-    const modalFinanceiro = document.getElementById('modal-financeiro');
-    const btnFecharFinanceiro = document.getElementById('btn-fechar-financeiro');
-    const conteudoFinanceiro = document.getElementById('conteudo-financeiro');
-    const tableProcessos = document.getElementById('table-processos');
-    const totalProcessosSpan = document.getElementById('total-processos');
-    const paginationInfo = document.getElementById('pagination-info');
-    const btnPrevPage = document.getElementById('btn-prev-page');
-    const btnNextPage = document.getElementById('btn-next-page');
-    const pageNumbers = document.getElementById('page-numbers');
     
-    // Carregar processos do localStorage
+    // Financeiro DOM
+    const selectPeriodo = document.getElementById('select-periodo');
+    const displayDatas = document.getElementById('display-datas');
+    const modalDatas = document.getElementById('modal-datas');
+    const btnFecharDatas = document.getElementById('btn-fechar-datas');
+    const btnAplicarDatas = document.getElementById('btn-aplicar-datas');
+    const inputInicio = document.getElementById('data-inicio');
+    const inputFim = document.getElementById('data-fim');
+
+    // Variáveis de Estado Financeiro
+    let periodoFiltro = { inicio: null, fim: null, tipo: 'mes-atual' };
+
+    // --- 1. Carregamento de Dados ---
     let processos = JSON.parse(localStorage.getItem('processos')) || [];
-    
-    // Variáveis de paginação
-    const PROCESSOS_POR_PAGINA = 10;
-    let paginaAtual = 1;
-    let processosFiltrados = [];
-    
-    // ========================================
-    // FUNÇÕES DE RENDERIZAÇÃO
-    // ========================================
-    
-    function renderizarProcessos(processosParaExibir = processos) {
-        processosFiltrados = processosParaExibir;
-        
-        // Atualizar contador total
-        totalProcessosSpan.textContent = processos.length;
-        
-        // Calcular paginação
-        const totalPaginas = Math.ceil(processosFiltrados.length / PROCESSOS_POR_PAGINA);
-        
-        // Ajustar página atual se necessário
-        if (paginaAtual > totalPaginas && totalPaginas > 0) {
-            paginaAtual = totalPaginas;
-        }
-        if (paginaAtual < 1) {
-            paginaAtual = 1;
-        }
-        
-        // Calcular índices
-        const indiceInicio = (paginaAtual - 1) * PROCESSOS_POR_PAGINA;
-        const indiceFim = indiceInicio + PROCESSOS_POR_PAGINA;
-        const processosPaginados = processosFiltrados.slice(indiceInicio, indiceFim);
-        
-        // Limpar tabela
-        tableProcessos.innerHTML = '';
-        
-        // Se não há processos
-        if (processosFiltrados.length === 0) {
-            const mensagem = searchInput.value.trim() || filterSituacao.value
-                ? 'Nenhum processo encontrado para sua pesquisa'
-                : 'Nenhum processo cadastrado';
-            
-            const subtitulo = searchInput.value.trim() || filterSituacao.value
-                ? 'Tente outro termo de pesquisa ou filtro'
-                : 'Clique em "Novo Processo" para começar';
-            
-            tableProcessos.innerHTML = `
-                <tr class="empty-state">
-                    <td colspan="4">
-                        <div class="empty-message">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="12" y1="18" x2="12" y2="12"></line>
-                                <line x1="9" y1="15" x2="15" y2="15"></line>
-                            </svg>
-                            <p>${mensagem}</p>
-                            <p class="empty-subtitle">${subtitulo}</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            atualizarControlesPaginacao();
-            return;
-        }
-        
-        // Renderizar cada processo da página atual
-        processosPaginados.forEach(processo => {
-            const numeroProcesso = processo.numeroProcesso || 'Não informado';
-            const autor = processo.autor || 'Não informado';
-            const situacao = processo.situacaoAtual || 'Não informada';
-            
-            const linha = document.createElement('tr');
-            linha.classList.add('processo-row');
-            linha.dataset.processoId = processo.id;
-            
-            linha.innerHTML = `
-                <td class="td-numero">${numeroProcesso}</td>
-                <td class="td-autor">${autor}</td>
-                <td class="td-situacao">
-                    <span class="badge-situacao">${situacao}</span>
-                </td>
-                <td class="td-actions">
-                    <button class="btn-action btn-view" data-id="${processo.id}" title="Visualizar/Editar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                    </button>
-                    <button class="btn-action btn-delete" data-id="${processo.id}" title="Excluir">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </button>
-                </td>
-            `;
-            
-            tableProcessos.appendChild(linha);
-        });
-        
-        // Adicionar eventos aos botões
-        adicionarEventosBotoes();
-        
-        // Atualizar controles de paginação
-        atualizarControlesPaginacao();
-    }
-    
-    // ========================================
-    // FUNÇÕES DE PAGINAÇÃO
-    // ========================================
-    
-    function atualizarControlesPaginacao() {
-        const totalPaginas = Math.ceil(processosFiltrados.length / PROCESSOS_POR_PAGINA);
-        
-        if (totalPaginas <= 1) {
-            document.querySelector('.pagination-container').style.display = 'none';
-            return;
-        }
-        
-        document.querySelector('.pagination-container').style.display = 'flex';
-        
-        // Atualizar informação de paginação
-        const indiceInicio = (paginaAtual - 1) * PROCESSOS_POR_PAGINA + 1;
-        const indiceFim = Math.min(paginaAtual * PROCESSOS_POR_PAGINA, processosFiltrados.length);
-        paginationInfo.textContent = `Mostrando ${indiceInicio}-${indiceFim} de ${processosFiltrados.length} processos`;
-        
-        // Habilitar/desabilitar botões
-        btnPrevPage.disabled = paginaAtual === 1;
-        btnNextPage.disabled = paginaAtual === totalPaginas;
-        
-        // Renderizar números de página
-        renderizarNumerosPagina(totalPaginas);
-    }
-    
-    function renderizarNumerosPagina(totalPaginas) {
-        pageNumbers.innerHTML = '';
-        
-        // Lógica para mostrar números de página
-        let paginasParaMostrar = [];
-        
-        if (totalPaginas <= 7) {
-            // Mostrar todas as páginas
-            for (let i = 1; i <= totalPaginas; i++) {
-                paginasParaMostrar.push(i);
+
+    // Função para criar dados de exemplo com alertas
+    function criarDadosExemplo() {
+        const hoje = new Date();
+        const exemplos = [
+            {
+                id: 1,
+                numeroProcesso: "2025-001234-5",
+                autor: "Maria Silva Santos",
+                situacaoAtual: "Em andamento",
+                dataProximoEvento: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 5).toISOString().split('T')[0], // VENCIDO HÁ 5 DIAS
+                honorariosContratuais: [{valor: "R$ 5.000,00", data: "2026-02-10"}],
+                honorariosSucumbenciais: [],
+                previsoesRecebimento: []
+            },
+            {
+                id: 2,
+                numeroProcesso: "2025-002567-8",
+                autor: "Empresa XYZ Ltda",
+                situacaoAtual: "Aguardando julgamento",
+                dataProximoEvento: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 3).toISOString().split('T')[0], // VENCE EM 3 DIAS
+                honorariosContratuais: [],
+                honorariosSucumbenciais: [{valor: "R$ 15.000,00", data: "2026-02-15"}],
+                previsoesRecebimento: [{valor: "R$ 20.000,00", dataPrevista: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).toISOString().split('T')[0]}]
+            },
+            {
+                id: 3,
+                numeroProcesso: "2025-003890-1",
+                autor: "João da Silva Pereira",
+                situacaoAtual: "Sentenciado",
+                dataProximoEvento: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1).toISOString().split('T')[0], // VENCE EM 1 DIA
+                honorariosContratuais: [{valor: "R$ 2.500,00", data: "2026-01-20"}],
+                honorariosSucumbenciais: [{valor: "R$ 8.000,00", data: "2026-02-05"}],
+                previsoesRecebimento: []
+            },
+            {
+                id: 4,
+                numeroProcesso: "2025-004123-9",
+                autor: "Carlos Alberto Costa",
+                situacaoAtual: "Em andamento",
+                dataProximoEvento: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 15).toISOString().split('T')[0], // SEM ALERTA
+                honorariosContratuais: [{valor: "R$ 3.500,00", data: "2026-02-01"}],
+                honorariosSucumbenciais: [],
+                previsoesRecebimento: []
             }
-        } else {
-            // Mostrar com reticências
-            if (paginaAtual <= 3) {
-                paginasParaMostrar = [1, 2, 3, 4, '...', totalPaginas];
-            } else if (paginaAtual >= totalPaginas - 2) {
-                paginasParaMostrar = [1, '...', totalPaginas - 3, totalPaginas - 2, totalPaginas - 1, totalPaginas];
-            } else {
-                paginasParaMostrar = [1, '...', paginaAtual - 1, paginaAtual, paginaAtual + 1, '...', totalPaginas];
-            }
-        }
+        ];
         
-        paginasParaMostrar.forEach(pagina => {
-            if (pagina === '...') {
-                const span = document.createElement('span');
-                span.className = 'page-ellipsis';
-                span.textContent = '...';
-                pageNumbers.appendChild(span);
-            } else {
-                const button = document.createElement('button');
-                button.className = 'page-number';
-                if (pagina === paginaAtual) {
-                    button.classList.add('active');
-                }
-                button.textContent = pagina;
-                button.addEventListener('click', () => {
-                    paginaAtual = pagina;
-                    renderizarProcessos(processosFiltrados);
-                });
-                pageNumbers.appendChild(button);
-            }
-        });
+        return exemplos;
     }
-    
-    function irParaPaginaAnterior() {
-        if (paginaAtual > 1) {
-            paginaAtual--;
-            renderizarProcessos(processosFiltrados);
-        }
-    }
-    
-    function irParaProximaPagina() {
-        const totalPaginas = Math.ceil(processosFiltrados.length / PROCESSOS_POR_PAGINA);
-        if (paginaAtual < totalPaginas) {
-            paginaAtual++;
-            renderizarProcessos(processosFiltrados);
-        }
-    }
-    
-    // ========================================
-    // FUNÇÕES DE PESQUISA E FILTRO
-    // ========================================
-    
-    function aplicarFiltros() {
-        const termo = searchInput.value;
-        const situacaoSelecionada = filterSituacao.value;
-        
-        // Exibir/ocultar botão de limpar pesquisa
-        clearSearchBtn.style.display = termo.trim() ? 'flex' : 'none';
-        
-        // Resetar para primeira página ao filtrar
-        paginaAtual = 1;
-        
-        let resultados = processos;
-        
-        // Filtrar por termo de pesquisa
-        if (termo.trim()) {
-            const termoLower = termo.toLowerCase();
-            resultados = resultados.filter(p => {
-                const autor = (p.autor || '').toLowerCase();
-                const numeroProcesso = (p.numeroProcesso || '').toLowerCase();
-                
-                return autor.includes(termoLower) || numeroProcesso.includes(termoLower);
-            });
-        }
-        
-        // Filtrar por situação
-        if (situacaoSelecionada) {
-            resultados = resultados.filter(p => {
-                return (p.situacaoAtual || '') === situacaoSelecionada;
-            });
-        }
-        
-        renderizarProcessos(resultados);
-    }
-    
-    function pesquisarProcessos(termo) {
-        aplicarFiltros();
-    }
-    
-    // ========================================
-    // FUNÇÕES DE AÇÕES
-    // ========================================
-    
-    function visualizarProcesso(id) {
-        // Salvar o ID do processo a ser editado
-        localStorage.setItem('processoEditando', id);
-        // Redirecionar para a página de cadastro
-        window.location.href = 'acompanhamento.html';
-    }
-    
-    function excluirProcesso(id) {
-        const processo = processos.find(p => p.id === id);
-        const nomeProcesso = processo?.numeroProcesso || 'este processo';
-        
-        if (!confirm(`Tem certeza que deseja excluir o processo "${nomeProcesso}"?\n\nEsta ação não pode ser desfeita.`)) {
-            return;
-        }
-        
-        // Remover do array
-        processos = processos.filter(p => p.id !== id);
-        
-        // Salvar no localStorage
+
+    // Se não houver processos salvos, carregar exemplos
+    if (processos.length === 0) {
+        processos = criarDadosExemplo();
         localStorage.setItem('processos', JSON.stringify(processos));
-        
-        // Re-aplicar filtros e renderizar
-        aplicarFiltros();
-        
-        console.log('Processo excluído. Total:', processos.length);
     }
-    
-    function adicionarEventosBotoes() {
-        // Botões de visualizar
-        document.querySelectorAll('.btn-view').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.dataset.id);
-                visualizarProcesso(id);
-            });
-        });
+
+    // Se não tiver dados reais, usar Mock Data APENAS para o financeiro visual
+    function getDadosParaRelatorio() {
+        // Se houver processos reais com valores, usa eles. Senão, usa fake.
+        const temValores = processos.some(p => (p.honorariosContratuais?.length || p.honorariosSucumbenciais?.length));
         
-        // Botões de excluir
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.dataset.id);
-                excluirProcesso(id);
-            });
+        if (processos.length > 0 && temValores) return processos;
+
+        // Mock Data (Dados Fictícios para Visualização)
+        return [
+            { id: 1, numeroProcesso: "001-MOCK", autor: "Cliente Exemplo 1", honorariosContratuais: [{valor: "R$ 5.000,00", data: "2026-02-10"}], honorariosSucumbenciais: [] },
+            { id: 2, numeroProcesso: "002-MOCK", autor: "Empresa Teste SA", honorariosContratuais: [], honorariosSucumbenciais: [{valor: "R$ 15.000,00", data: "2026-02-15"}] },
+            { id: 3, numeroProcesso: "003-MOCK", autor: "João da Silva", honorariosContratuais: [{valor: "R$ 2.500,00", data: "2026-01-20"}], previsoesRecebimento: [{valor: "R$ 10.000,00", dataPrevista: "2026-03-10"}] }
+        ];
+    }
+
+    // --- 2. Renderizar Tabela de Processos (Estilo Original Restaurado) ---
+    function renderizarProcessos() {
+        const termo = searchInput.value.toLowerCase();
+        const situacaoFiltro = filterSituacao.value;
+        
+        tableBody.innerHTML = '';
+        
+        // Filtra processos REAIS da lista
+        const processosFiltrados = processos.filter(p => {
+            const matchTexto = (p.autor && p.autor.toLowerCase().includes(termo)) || 
+                               (p.numeroProcesso && p.numeroProcesso.includes(termo));
+            const matchSituacao = situacaoFiltro ? p.situacaoAtual === situacaoFiltro : true;
+            return matchTexto && matchSituacao;
+        });
+
+        totalProcessosSpan.textContent = processosFiltrados.length;
+
+        if (processosFiltrados.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" class="empty-message">Nenhum processo encontrado.</td></tr>`;
+            return;
+        }
+
+        processosFiltrados.forEach(p => {
+            // Define classe do badge baseado no status
+            let badgeClass = 'status-default';
+            if (p.situacaoAtual === 'Em andamento') badgeClass = 'status-blue'; // Exemplo, ajuste conforme seu CSS
+            if (p.situacaoAtual === 'Sentenciado') badgeClass = 'status-green';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="td-numero">${p.numeroProcesso}</td>
+                <td class="td-autor">${p.autor}</td>
+                <td class="td-situacao"><span class="badge-situacao" data-status="${p.situacaoAtual || 'Ativo'}">${p.situacaoAtual || 'Ativo'}</span></td>
+                <td class="td-actions">
+                    <button class="btn-action btn-view" onclick="editarProcesso(${p.id})">Editar</button>
+                    <button class="btn-action btn-delete" onclick="excluirProcesso(${p.id})">Deletar</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
         });
     }
+
+    // --- 3. Lógica de Alertas e Prazos ---
     
-    // ========================================
-    // EVENT LISTENERS
-    // ========================================
-    
-    // Pesquisa
-    searchInput.addEventListener('input', function() {
-        aplicarFiltros();
-    });
-    
-    // Filtro de situação
-    filterSituacao.addEventListener('change', function() {
-        aplicarFiltros();
-    });
-    
-    // Limpar pesquisa
-    clearSearchBtn.addEventListener('click', function() {
-        searchInput.value = '';
-        clearSearchBtn.style.display = 'none';
-        aplicarFiltros();
-        searchInput.focus();
-    });
-    
-    // Botão Novo Processo
-    btnNovoProcesso.addEventListener('click', function() {
-        // Limpar o processo em edição
-        localStorage.removeItem('processoEditando');
-        // Redirecionar para a página de cadastro
-        window.location.href = 'cadastro.html';
-    });
-    
-    // Botões de paginação
-    btnPrevPage.addEventListener('click', irParaPaginaAnterior);
-    btnNextPage.addEventListener('click', irParaProximaPagina);
-    
-    // ========================================
-    // SISTEMA DE ALERTAS
-    // ========================================
-    
-    function calcularDiasRestantes(dataLimite) {
+    function gerarAlertas() {
+        const alertas = [];
         const hoje = new Date();
         hoje.setHours(0, 0, 0, 0);
         
-        const partesData = dataLimite.split('/');
-        const dataLimiteObj = new Date(partesData[2], partesData[1] - 1, partesData[0]);
-        dataLimiteObj.setHours(0, 0, 0, 0);
-        
-        const diffTime = dataLimiteObj - hoje;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        return diffDays;
-    }
-    
-    function coletarAlertas() {
-        const alertas = [];
-        
-        processos.forEach(processo => {
-            if (processo.prazos && processo.prazos.length > 0) {
-                processo.prazos.forEach(prazo => {
-                    const diasRestantes = calcularDiasRestantes(prazo.dataLimite);
-                    
-                    // Mostrar prazos vencidos, hoje ou próximos (até 7 dias)
-                    if (diasRestantes <= 7) {
-                        let tipo = 'proximo';
-                        let badge = `${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
-                        let classe = 'atencao';
-                        let urgencia = 'atencao'; // Novo campo para o dashboard
-                        
-                        if (diasRestantes < 0) {
-                            tipo = 'vencido';
-                            badge = `Vencido há ${Math.abs(diasRestantes)} ${Math.abs(diasRestantes) === 1 ? 'dia' : 'dias'}`;
-                            classe = 'urgente';
-                            urgencia = 'critico';
-                        } else if (diasRestantes === 0) {
-                            tipo = 'hoje';
-                            badge = 'Vence HOJE!';
-                            classe = 'urgente';
-                            urgencia = 'critico';
-                        } else if (diasRestantes <= 2) {
-                            classe = 'urgente';
-                            urgencia = 'urgente';
-                        }
-                        
-                        alertas.push({
-                            processoId: processo.id,
-                            numeroProcesso: processo.numeroProcesso,
-                            autor: processo.autor,
-                            descricao: prazo.descricao,
-                            dataLimite: prazo.dataLimite,
-                            diasRestantes: diasRestantes,
-                            tipo: tipo,
-                            badge: badge,
-                            classe: classe,
-                            urgencia: urgencia
-                        });
-                    }
-                });
+        processos.forEach(proc => {
+            // Alerta para processos próximos de vencer
+            if (proc.dataProximoEvento) {
+                const dataEvento = new Date(proc.dataProximoEvento);
+                dataEvento.setHours(0, 0, 0, 0);
+                const diasRestantes = Math.ceil((dataEvento - hoje) / (1000 * 60 * 60 * 24));
+                
+                if (diasRestantes > 0 && diasRestantes <= 7) {
+                    alertas.push({
+                        tipo: 'alerta',
+                        processo: proc.numeroProcesso,
+                        cliente: proc.autor,
+                        mensagem: `Prazo próximo - ${diasRestantes} dia(s) restante(s)`,
+                        data: proc.dataProximoEvento
+                    });
+                } else if (diasRestantes <= 0) {
+                    alertas.push({
+                        tipo: 'urgente',
+                        processo: proc.numeroProcesso,
+                        cliente: proc.autor,
+                        mensagem: 'PRAZO VENCIDO!',
+                        data: proc.dataProximoEvento
+                    });
+                }
             }
+            
+            // Alerta para previsões de recebimento
+            (proc.previsoesRecebimento || []).forEach(prev => {
+                const dataPrev = new Date(prev.dataPrevista || prev.data);
+                dataPrev.setHours(0, 0, 0, 0);
+                const diasRestantes = Math.ceil((dataPrev - hoje) / (1000 * 60 * 60 * 24));
+                
+                if (diasRestantes === 0) {
+                    alertas.push({
+                        tipo: 'info',
+                        processo: proc.numeroProcesso,
+                        cliente: proc.autor,
+                        mensagem: `Previsão de recebimento: ${prev.valor}`,
+                        data: prev.dataPrevista || prev.data
+                    });
+                }
+            });
         });
         
-        // Ordenar: vencidos primeiro, depois por dias restantes
-        alertas.sort((a, b) => a.diasRestantes - b.diasRestantes);
-        
-        // Se não houver alertas reais, retornar exemplos para demonstração
-        if (alertas.length === 0) {
-            // Adicionar exemplos fictícios se não houver prazos reais próximos
-            return [
-                {
-                    processoId: 9991,
-                    numeroProcesso: "0000000-00.2026.8.26.0000",
-                    autor: "Cliente Exemplo 1",
-                    descricao: "Prazo para recurso - Exemplo Crítico",
-                    dataLimite: "13/01/2026",
-                    diasRestantes: -2,
-                    tipo: 'vencido',
-                    badge: 'Vencido há 2 dias',
-                    classe: 'urgente',
-                    urgencia: 'critico'
-                },
-                {
-                    processoId: 9992,
-                    numeroProcesso: "1111111-11.2026.8.26.1111",
-                    autor: "Cliente Exemplo 2",
-                    descricao: "Audiência de Instrução - Exemplo Hoje",
-                    dataLimite: "15/01/2026",
-                    diasRestantes: 0,
-                    tipo: 'hoje',
-                    badge: 'Vence HOJE!',
-                    classe: 'urgente',
-                    urgencia: 'critico'
-                },
-                {
-                    processoId: 9993,
-                    numeroProcesso: "2222222-22.2026.8.26.2222",
-                    autor: "Cliente Exemplo 3",
-                    descricao: "Apresentação de Quesitos - Exemplo Próximo",
-                    dataLimite: "20/01/2026",
-                    diasRestantes: 5,
-                    tipo: 'proximo',
-                    badge: '5 dias',
-                    classe: 'atencao',
-                    urgencia: 'atencao'
-                }
-            ];
-        }
-
         return alertas;
     }
-    
-    function renderizarAlertas() {
-        const alertas = coletarAlertas();
+
+    function atualizarBadgeAlertas() {
+        const alertas = gerarAlertas();
+        const badge = document.getElementById('badge-alertas');
+        const btnAlertas = document.getElementById('btn-alertas');
         
-        // Atualizar badge
         if (alertas.length > 0) {
-            badgeAlertas.textContent = alertas.length;
-            badgeAlertas.style.display = 'inline-flex';
+            badge.textContent = alertas.length;
+            badge.style.display = 'inline-flex';
         } else {
-            badgeAlertas.style.display = 'none';
+            badge.style.display = 'none';
         }
         
-        // Renderizar lista de alertas
-        listaAlertas.innerHTML = '';
+        // Atualizar alertas em destaque na página
+        atualizarAlertasDestaque(alertas);
+    }
+
+    function atualizarAlertasDestaque(alertas) {
+        const container = document.getElementById('alertas-destaque');
         
         if (alertas.length === 0) {
-            listaAlertas.innerHTML = `
-                <div class="alerta-vazio">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                    <p>Nenhum alerta no momento</p>
-                    <p style="font-size: 13px; margin-top: 4px;">Todos os prazos estão em dia! 🎉</p>
-                </div>
-            `;
+            container.innerHTML = '';
             return;
         }
+
+        let html = '<div style="display: grid; gap: 12px;">';
         
         alertas.forEach(alerta => {
-            const item = document.createElement('div');
-            item.className = `alerta-item ${alerta.classe}`;
-            item.dataset.processoId = alerta.processoId;
+            let bgColor = '#eff6ff';
+            let borderColor = '#7dd3fc';
+            let textColor = '#0c4a6e';
+            let icone = 'ℹ️';
             
-            item.innerHTML = `
-                <div class="alerta-header">
-                    <div class="alerta-processo">${alerta.numeroProcesso || 'Processo sem número'}</div>
-                    <span class="alerta-badge ${alerta.tipo}">${alerta.badge}</span>
-                </div>
-                <div class="alerta-prazo">${alerta.descricao}</div>
-                <div class="alerta-data">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    Data limite: ${alerta.dataLimite}
-                </div>
-                <div style="font-size: 13px; color: var(--gray-600); margin-top: 8px;">
-                    Cliente: ${alerta.autor || 'Não informado'}
+            if (alerta.tipo === 'urgente') {
+                bgColor = '#fef2f2';
+                borderColor = '#fecaca';
+                textColor = '#7f1d1d';
+                icone = '⚠️';
+            } else if (alerta.tipo === 'alerta') {
+                bgColor = '#fef3c7';
+                borderColor = '#fde68a';
+                textColor = '#78350f';
+                icone = '🔔';
+            } else if (alerta.tipo === 'info') {
+                bgColor = '#d1fae5';
+                borderColor = '#a7f3d0';
+                textColor = '#065f46';
+                icone = '✓';
+            }
+            
+            html += `
+                <div style="background: ${bgColor}; border-left: 4px solid ${borderColor}; padding: 15px; border-radius: 8px; color: ${textColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; margin-bottom: 5px; font-size: 15px;">${icone} ${alerta.processo} - ${alerta.cliente}</div>
+                            <div style="font-size: 14px; margin-bottom: 5px;">${alerta.mensagem}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">📅 ${new Date(alerta.data).toLocaleDateString('pt-BR')}</div>
+                        </div>
+                        <button onclick="this.closest('div').style.display='none'" style="background: none; border: none; font-size: 16px; cursor: pointer; opacity: 0.6;">×</button>
+                    </div>
                 </div>
             `;
-            
-            // Adicionar evento de clique para abrir o processo
-            item.addEventListener('click', function() {
-                localStorage.setItem('processoEditando', alerta.processoId);
-                window.location.href = 'acompanhamento.html';
-            });
-            
-            listaAlertas.appendChild(item);
         });
-    }
-    
-    // Abrir modal de alertas
-    if (btnAlertas) {
-        btnAlertas.addEventListener('click', function() {
-            renderizarAlertas();
-            modalAlertas.classList.add('active');
-        });
-    }
-    
-    // Renderizar alertas no dashboard
-    function renderizarAlertasDashboard() {
-        let alertas = coletarAlertas();
-        const dashboardAlertasSection = document.getElementById('dashboard-alertas-section');
-        const dashboardAlertasLista = document.getElementById('dashboard-alertas-lista');
         
-        if (!dashboardAlertasSection || !dashboardAlertasLista) return;
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    document.getElementById('btn-alertas').addEventListener('click', () => {
+        const alertas = gerarAlertas();
+        const modalAlertas = document.getElementById('modal-alertas');
+        const listaAlertas = document.getElementById('lista-alertas');
         
-        // SE NÃO HOUVER ALERTAS REAIS, GERAR ALERTAS DE EXEMPLO PARA VISUALIZAÇÃO
         if (alertas.length === 0) {
-            console.log('Nenhum alerta real encontrado. Gerando alertas de exemplo para demonstração.');
-            alertas = [
-                {
-                    descricao: "Prazo para recurso - Exemplo Crítico",
-                    numeroProcesso: "0000000-00.2026.8.26.0000",
-                    diasRestantes: -2,
-                    tipo: 'vencido',
-                    badge: 'Vencido há 2 dias',
-                    classe: 'urgente',
-                    urgencia: 'critico'
-                },
-                {
-                    descricao: "Audiência de Instrução - Exemplo Hoje",
-                    numeroProcesso: "1111111-11.2026.8.26.1111",
-                    diasRestantes: 0,
-                    tipo: 'hoje',
-                    badge: 'Vence HOJE!',
-                    classe: 'urgente',
-                    urgencia: 'urgente'
-                },
-                {
-                    descricao: "Apresentação de Quesitos - Exemplo Próximo",
-                    numeroProcesso: "2222222-22.2026.8.26.2222",
-                    diasRestantes: 5,
-                    tipo: 'proximo',
-                    badge: '5 dias',
-                    classe: 'atencao',
-                    urgencia: 'atencao'
+            listaAlertas.innerHTML = '<div style="padding: 20px; text-align: center; color: #10b981; font-weight: 600;">✓ Nenhum alerta no momento</div>';
+        } else {
+            listaAlertas.innerHTML = alertas.map(alerta => {
+                let bgColor = '#eff6ff';
+                let borderColor = '#7dd3fc';
+                let textColor = '#0c4a6e';
+                
+                if (alerta.tipo === 'urgente') {
+                    bgColor = '#fef2f2';
+                    borderColor = '#fecaca';
+                    textColor = '#7f1d1d';
+                } else if (alerta.tipo === 'alerta') {
+                    bgColor = '#fef3c7';
+                    borderColor = '#fde68a';
+                    textColor = '#78350f';
+                } else if (alerta.tipo === 'info') {
+                    bgColor = '#d1fae5';
+                    borderColor = '#a7f3d0';
+                    textColor = '#065f46';
                 }
-            ];
+                
+                return `
+                    <div style="background: ${bgColor}; border-left: 4px solid ${borderColor}; padding: 15px; margin-bottom: 10px; border-radius: 6px; color: ${textColor};">
+                        <div style="font-weight: 600; margin-bottom: 5px;">${alerta.processo} - ${alerta.cliente}</div>
+                        <div style="font-size: 14px;">${alerta.mensagem}</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Data: ${new Date(alerta.data).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                `;
+            }).join('');
         }
         
-        if (alertas.length === 0) {
-            dashboardAlertasSection.style.display = 'none';
+        modalAlertas.style.display = 'flex';
+    });
+
+    document.getElementById('btn-fechar-alertas').addEventListener('click', () => {
+        document.getElementById('modal-alertas').style.display = 'none';
+    });
+
+    // --- 4. Lógica Financeira ---
+    
+    function parseMoney(str) {
+        if(!str) return 0;
+        if(typeof str === 'number') return str;
+        return parseFloat(str.replace('R$','').replace(/\./g,'').replace(',','.').trim()) || 0;
+    }
+
+    function formatMoney(val) {
+        return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function dataNoIntervalo(dataStr) {
+        if (!periodoFiltro.inicio || !periodoFiltro.fim) return true; // Se não tem filtro, aceita tudo (ou trata logica de mes atual)
+        
+        // Trata formatos DD/MM/AAAA ou AAAA-MM-DD
+        let dataObj;
+        if (dataStr.includes('/')) {
+            const parts = dataStr.split('/');
+            dataObj = new Date(parts[2], parts[1]-1, parts[0]);
+        } else {
+            dataObj = new Date(dataStr);
+        }
+        
+        return dataObj >= periodoFiltro.inicio && dataObj <= periodoFiltro.fim;
+    }
+
+    function calcularTotais() {
+        const dados = getDadosParaRelatorio();
+        let totalC = 0, totalS = 0, totalP = 0;
+
+        dados.forEach(proc => {
+            // Contratuais
+            (proc.honorariosContratuais || []).forEach(h => {
+                if(dataNoIntervalo(h.data)) totalC += parseMoney(h.valor);
+            });
+            // Sucumbenciais
+            (proc.honorariosSucumbenciais || []).forEach(h => {
+                if(dataNoIntervalo(h.data)) totalS += parseMoney(h.valor);
+            });
+            // Previsão
+            (proc.previsoesRecebimento || []).forEach(h => {
+                if(dataNoIntervalo(h.dataPrevista || h.data)) totalP += parseMoney(h.valor);
+            });
+        });
+
+        document.getElementById('val-contratual').textContent = formatMoney(totalC);
+        document.getElementById('val-sucumbencial').textContent = formatMoney(totalS);
+        document.getElementById('val-previsao').textContent = formatMoney(totalP);
+        
+        return { c: totalC, s: totalS, p: totalP };
+    }
+
+    // --- 4. Controle de Datas (Lógica Solicitada) ---
+    
+    function atualizarPeriodo() {
+        const val = selectPeriodo.value;
+        const hoje = new Date();
+
+        if (val === 'mes-atual') {
+            periodoFiltro.inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+            periodoFiltro.fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+            displayDatas.style.display = 'none';
+            calcularTotais();
+        } 
+        else if (val === 'tudo') {
+            periodoFiltro.inicio = null;
+            periodoFiltro.fim = null;
+            displayDatas.style.display = 'none';
+            calcularTotais();
+        }
+        else if (val === 'personalizado') {
+            modalDatas.style.display = 'flex';
+        }
+    }
+
+    selectPeriodo.addEventListener('change', atualizarPeriodo);
+    
+    btnFecharDatas.addEventListener('click', () => {
+        modalDatas.style.display = 'none';
+        selectPeriodo.value = 'mes-atual'; // Reseta se cancelar
+        atualizarPeriodo();
+    });
+
+    btnAplicarDatas.addEventListener('click', () => {
+        if(!inputInicio.value || !inputFim.value) {
+            alert('Selecione as duas datas.');
             return;
         }
+        periodoFiltro.inicio = new Date(inputInicio.value);
+        periodoFiltro.fim = new Date(inputFim.value);
         
-        dashboardAlertasSection.style.display = 'block';
+        // Ajuste fuso/horario fim do dia
+        periodoFiltro.inicio.setHours(0,0,0,0);
+        periodoFiltro.fim.setHours(23,59,59,999);
+
+        displayDatas.textContent = `${inputInicio.value.split('-').reverse().join('/')} até ${inputFim.value.split('-').reverse().join('/')}`;
+        displayDatas.style.display = 'inline';
         
-        // Mostrar apenas os 5 primeiros alertas
-        const alertasLimitados = alertas.slice(0, 5);
-        
-        dashboardAlertasLista.innerHTML = '';
-        
-        alertasLimitados.forEach(alerta => {
-            const item = document.createElement('div');
-            item.className = `dashboard-alerta-item ${alerta.urgencia}`;
-            
-            let icone = '⚠️';
-            if (alerta.urgencia === 'critico') icone = '🔴';
-            else if (alerta.urgencia === 'urgente') icone = '🟠';
-            else if (alerta.urgencia === 'atencao') icone = '🟡';
-            
-            item.innerHTML = `
-                <div class="dashboard-alerta-icon">${icone}</div>
-                <div class="dashboard-alerta-content">
-                    <div class="dashboard-alerta-titulo">${alerta.descricao}</div>
-                    <div class="dashboard-alerta-detalhes">
-                        <span class="dashboard-alerta-processo">${alerta.numeroProcesso}</span>
-                        <span class="dashboard-alerta-prazo">${alerta.badge}</span>
+        modalDatas.style.display = 'none';
+        calcularTotais();
+    });
+
+    // --- 5. Botões de Exportação ---
+
+    document.getElementById('btn-pdf').addEventListener('click', () => {
+        gerarPDF();
+    });
+
+    function gerarPDF() {
+        const totais = calcularTotais();
+        const dados = getDadosParaRelatorio();
+        const hoje = new Date();
+        const dataAtual = hoje.toLocaleDateString('pt-BR');
+
+        // HTML do relatório para PDF
+        const html = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    * { margin: 0; padding: 0; }
+                    body { 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                        background: white;
+                        color: #333;
+                        line-height: 1.6;
+                    }
+                    .header { 
+                        background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+                        color: white;
+                        padding: 40px 30px;
+                        margin-bottom: 30px;
+                        text-align: center;
+                        border-radius: 8px;
+                    }
+                    .header h1 { 
+                        font-size: 28px;
+                        margin-bottom: 10px;
+                        font-weight: 700;
+                    }
+                    .header .subtitle {
+                        font-size: 16px;
+                        opacity: 0.95;
+                        margin-bottom: 5px;
+                    }
+                    .header .data {
+                        font-size: 13px;
+                        opacity: 0.8;
+                    }
+                    .section { 
+                        margin-bottom: 35px;
+                        padding: 0 0;
+                    }
+                    .section h2 { 
+                        color: #1f2937;
+                        font-size: 16px;
+                        font-weight: 700;
+                        border-bottom: 3px solid #3b82f6;
+                        padding-bottom: 12px;
+                        margin-bottom: 20px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .financeiro-cards { 
+                        display: grid; 
+                        grid-template-columns: 1fr 1fr 1fr; 
+                        gap: 15px; 
+                        margin-bottom: 25px;
+                    }
+                    .card { 
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        border-left: 5px solid #3b82f6;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                        transition: transform 0.2s;
+                    }
+                    .card:hover {
+                        transform: translateY(-2px);
+                    }
+                    .card.sucumbencial { 
+                        border-left-color: #10b981;
+                    }
+                    .card.previsao { 
+                        border-left-color: #f59e0b;
+                    }
+                    .card-label { 
+                        font-size: 11px; 
+                        color: #9ca3af; 
+                        text-transform: uppercase; 
+                        font-weight: 700;
+                        letter-spacing: 0.5px;
+                        margin-bottom: 8px;
+                    }
+                    .card-value { 
+                        font-size: 26px; 
+                        color: #1f2937; 
+                        font-weight: 700;
+                    }
+                    .resumo {
+                        background: #f9fafb;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-top: 20px;
+                    }
+                    .resumo-row { 
+                        display: flex; 
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 12px 0; 
+                        border-bottom: 1px solid #e5e7eb;
+                    }
+                    .resumo-row:last-child {
+                        border-bottom: none;
+                    }
+                    .resumo-row strong { 
+                        color: #374151;
+                        font-weight: 600;
+                    }
+                    .resumo-row .valor { 
+                        font-weight: 700; 
+                        color: #3b82f6;
+                        font-size: 15px;
+                    }
+                    .resumo-row.total {
+                        background: white;
+                        padding: 16px 0;
+                        border-top: 2px solid #3b82f6;
+                        border-bottom: 2px solid #3b82f6;
+                        margin-top: 15px;
+                    }
+                    .resumo-row.total strong {
+                        font-size: 16px;
+                        color: #1f2937;
+                    }
+                    .resumo-row.total .valor {
+                        font-size: 20px;
+                        color: #1f2937;
+                    }
+                    table { 
+                        width: 100%; 
+                        border-collapse: collapse;
+                        margin-top: 15px;
+                    }
+                    thead { 
+                        background: #1f2937;
+                        color: white;
+                    }
+                    th { 
+                        padding: 15px 12px;
+                        text-align: left;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        font-size: 12px;
+                        border-bottom: 2px solid #3b82f6;
+                    }
+                    td { 
+                        padding: 12px;
+                        border-bottom: 1px solid #e5e7eb;
+                        font-size: 13px;
+                    }
+                    tbody tr:nth-child(odd) {
+                        background: #f9fafb;
+                    }
+                    tbody tr:hover {
+                        background: #f3f4f6;
+                    }
+                    tbody tr td:first-child {
+                        font-weight: 700;
+                        color: #3b82f6;
+                    }
+                    .rodape { 
+                        margin-top: 40px; 
+                        text-align: center; 
+                        color: #9ca3af;
+                        font-size: 11px;
+                        border-top: 1px solid #e5e7eb;
+                        padding-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>Controle de Processos Judiciais</h1>
+                    <div class="subtitle">Relatório Financeiro</div>
+                    <div class="data">Gerado em ${dataAtual}</div>
+                </div>
+
+                <div class="section">
+                    <h2>Resumo Financeiro</h2>
+                    <div class="financeiro-cards">
+                        <div class="card">
+                            <div class="card-label">💰 Contratuais</div>
+                            <div class="card-value">${formatMoney(totais.c)}</div>
+                        </div>
+                        <div class="card sucumbencial">
+                            <div class="card-label">📈 Sucumbenciais</div>
+                            <div class="card-value">${formatMoney(totais.s)}</div>
+                        </div>
+                        <div class="card previsao">
+                            <div class="card-label">📅 Previsão</div>
+                            <div class="card-value">${formatMoney(totais.p)}</div>
+                        </div>
+                    </div>
+
+                    <div class="resumo">
+                        <div class="resumo-row">
+                            <strong>Total Contratuais:</strong>
+                            <span class="valor">${formatMoney(totais.c)}</span>
+                        </div>
+                        <div class="resumo-row">
+                            <strong>Total Sucumbenciais:</strong>
+                            <span class="valor">${formatMoney(totais.s)}</span>
+                        </div>
+                        <div class="resumo-row">
+                            <strong>Total em Previsão:</strong>
+                            <span class="valor">${formatMoney(totais.p)}</span>
+                        </div>
+                        <div class="resumo-row total">
+                            <strong>TOTAL GERAL:</strong>
+                            <span class="valor">${formatMoney(totais.c + totais.s + totais.p)}</span>
+                        </div>
                     </div>
                 </div>
-            `;
-            
-            item.style.cursor = 'pointer';
-            item.addEventListener('click', function() {
-                localStorage.setItem('processoEditando', alerta.processoId);
-                window.location.href = 'acompanhamento.html';
-            });
-            
-            dashboardAlertasLista.appendChild(item);
-        });
-    }
-    
-    // Botão "Ver Todos" os alertas
-    const btnVerTodosAlertas = document.getElementById('btn-ver-todos-alertas');
-    if (btnVerTodosAlertas) {
-        btnVerTodosAlertas.addEventListener('click', function() {
-            renderizarAlertas();
-            modalAlertas.classList.add('active');
-        });
-    }
-    
-    // Fechar modal
-    if (btnFecharAlertas) {
-        btnFecharAlertas.addEventListener('click', function() {
-            modalAlertas.classList.remove('active');
-        });
-    }
-    
-    // Fechar modal ao clicar fora
-    if (modalAlertas) {
-        modalAlertas.addEventListener('click', function(e) {
-            if (e.target === modalAlertas) {
-                modalAlertas.classList.remove('active');
-            }
-        });
-    }
-    
-    // ========================================
-    // SISTEMA FINANCEIRO
-    // ========================================
-    
-    function converterValorParaNumero(valorString) {
-        if (!valorString) return 0;
-        // Remove R$, espaços e converte vírgula para ponto
-        return parseFloat(valorString.replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
-    }
-    
-    function formatarMoeda(valor) {
-        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-    
-    function coletarDadosFinanceiros() {
-        let totalContratual = 0;
-        let totalSucumbencial = 0;
-        let totalPrevisao = 0;
-        const processosComValores = [];
-        
-        processos.forEach(processo => {
-            let contratuaisProcesso = 0;
-            let sucumbenciaisProcesso = 0;
-            let previsoesProcesso = 0;
-            
-            // Honorários contratuais
-            if (processo.honorariosContratuais && processo.honorariosContratuais.length > 0) {
-                processo.honorariosContratuais.forEach(h => {
-                    const valor = converterValorParaNumero(h.valor);
-                    totalContratual += valor;
-                    contratuaisProcesso += valor;
-                });
-            }
-            
-            // Honorários sucumbenciais
-            if (processo.honorariosSucumbenciais && processo.honorariosSucumbenciais.length > 0) {
-                processo.honorariosSucumbenciais.forEach(h => {
-                    const valor = converterValorParaNumero(h.valor);
-                    totalSucumbencial += valor;
-                    sucumbenciaisProcesso += valor;
-                });
-            }
-            
-            // Previsões de recebimento
-            if (processo.previsoesRecebimento && processo.previsoesRecebimento.length > 0) {
-                processo.previsoesRecebimento.forEach(p => {
-                    const valor = converterValorParaNumero(p.valor);
-                    totalPrevisao += valor;
-                    previsoesProcesso += valor;
-                });
-            }
-            
-            // Se o processo tem algum valor, adiciona à lista
-            const totalProcesso = contratuaisProcesso + sucumbenciaisProcesso + previsoesProcesso;
-            if (totalProcesso > 0) {
-                processosComValores.push({
-                    id: processo.id,
-                    numeroProcesso: processo.numeroProcesso,
-                    autor: processo.autor,
-                    contratual: contratuaisProcesso,
-                    sucumbencial: sucumbenciaisProcesso,
-                    previsao: previsoesProcesso,
-                    total: totalProcesso
-                });
-            }
-        });
-        
-        // Ordenar por total decrescente
-        processosComValores.sort((a, b) => b.total - a.total);
-        
-        return {
-            totalContratual,
-            totalSucumbencial,
-            totalPrevisao,
-            totalGeral: totalContratual + totalSucumbencial + totalPrevisao,
-            processos: processosComValores
+
+                <div class="section">
+                    <h2>Detalhamento por Processo</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número do Processo</th>
+                                <th>Cliente</th>
+                                <th>Contratuais</th>
+                                <th>Sucumbenciais</th>
+                                <th>Previsão</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${dados.map(proc => {
+                                let contratual = 0, sucumbencial = 0, previsao = 0;
+                                (proc.honorariosContratuais || []).forEach(h => {
+                                    if(dataNoIntervalo(h.data)) contratual += parseMoney(h.valor);
+                                });
+                                (proc.honorariosSucumbenciais || []).forEach(h => {
+                                    if(dataNoIntervalo(h.data)) sucumbencial += parseMoney(h.valor);
+                                });
+                                (proc.previsoesRecebimento || []).forEach(h => {
+                                    if(dataNoIntervalo(h.dataPrevista || h.data)) previsao += parseMoney(h.valor);
+                                });
+                                return `
+                                    <tr>
+                                        <td>${proc.numeroProcesso}</td>
+                                        <td>${proc.autor}</td>
+                                        <td>${formatMoney(contratual)}</td>
+                                        <td>${formatMoney(sucumbencial)}</td>
+                                        <td>${formatMoney(previsao)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="rodape">
+                    <p>Este documento foi gerado automaticamente pelo <strong>Sistema de Controle de Processos Judiciais</strong></p>
+                    <p style="margin-top: 5px;">Período: <strong>${periodoFiltro.inicio ? periodoFiltro.inicio.toLocaleDateString('pt-BR') + ' a ' + periodoFiltro.fim.toLocaleDateString('pt-BR') : 'Todo o período'}</strong></p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Usar html2pdf para gerar o PDF
+        const element = document.createElement('div');
+        element.innerHTML = html;
+
+        const opt = {
+            margin: 12,
+            filename: `relatorio_financeiro_${hoje.toISOString().split('T')[0]}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
         };
+
+        html2pdf().set(opt).from(element).save();
     }
-    
-    function renderizarFinanceiro() {
-        const dados = coletarDadosFinanceiros();
+
+    document.getElementById('btn-excel').addEventListener('click', () => {
+        let csv = "Tipo;Valor\n";
+        const totais = calcularTotais();
+        csv += `Contratuais;${totais.c}\n`;
+        csv += `Sucumbenciais;${totais.s}\n`;
+        csv += `Previsão;${totais.p}\n`;
         
-        if (dados.totalGeral === 0) {
-            conteudoFinanceiro.innerHTML = `
-                <div class="financeiro-vazio">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                    <p>Nenhum dado financeiro cadastrado</p>
-                    <p style="font-size: 13px; margin-top: 4px;">Adicione honorários nos processos para visualizar o resumo</p>
-                </div>
-            `;
-            return;
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'relatorio_financeiro.csv';
+        a.click();
+    });
+
+    document.getElementById('btn-grafico').addEventListener('click', () => {
+        const totais = calcularTotais();
+        const container = document.getElementById('modal-grafico-container');
+        
+        // Determinar texto do período
+        let textoPeriodo = 'Mês Atual';
+        if (periodoFiltro.inicio && periodoFiltro.fim) {
+            textoPeriodo = `${periodoFiltro.inicio.toLocaleDateString('pt-BR')} a ${periodoFiltro.fim.toLocaleDateString('pt-BR')}`;
         }
         
-        // Preparar dados para o gráfico de pizza
-        const dadosGrafico = [];
-        
-        if (dados.totalContratual > 0) {
-            dadosGrafico.push({
-                label: 'Honorários Contratuais',
-                valor: dados.totalContratual,
-                cor: '#3b82f6',
-                corEscura: '#2563eb'
-            });
-        }
-        
-        if (dados.totalSucumbencial > 0) {
-            dadosGrafico.push({
-                label: 'Honorários Sucumbenciais',
-                valor: dados.totalSucumbencial,
-                cor: '#8b5cf6',
-                corEscura: '#7c3aed'
-            });
-        }
-        
-        if (dados.totalPrevisao > 0) {
-            dadosGrafico.push({
-                label: 'Previsões a Receber',
-                valor: dados.totalPrevisao,
-                cor: '#f59e0b',
-                corEscura: '#d97706'
-            });
-        }
-        
-        let html = `
-            <div class="financeiro-grafico">
-                <div class="financeiro-header">
-                    <h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="2" x2="12" y2="12"></line>
-                            <line x1="12" y1="12" x2="16" y2="16"></line>
-                        </svg>
-                        Distribuição de Receitas
-                    </h3>
-                    <div class="filtro-mes">
-                        <label for="select-mes">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            Mês:
-                        </label>
-                        <select id="select-mes" class="select-mes">
-                            <option value="todos">Todos os Meses</option>
-                            <option value="0">Janeiro</option>
-                            <option value="1">Fevereiro</option>
-                            <option value="2">Março</option>
-                            <option value="3">Abril</option>
-                            <option value="4">Maio</option>
-                            <option value="5">Junho</option>
-                            <option value="6">Julho</option>
-                            <option value="7">Agosto</option>
-                            <option value="8">Setembro</option>
-                            <option value="9">Outubro</option>
-                            <option value="10">Novembro</option>
-                            <option value="11">Dezembro</option>
-                        </select>
+        container.innerHTML = `
+            <div class="modal-alertas" style="display: flex;">
+                <div class="modal-alertas-content" style="width: 600px; max-width: 90%;">
+                    <div class="modal-alertas-header">
+                        <div>
+                            <h2>Gráfico Financeiro</h2>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Período: ${textoPeriodo}</p>
+                        </div>
+                        <button onclick="this.closest('.modal-alertas').remove()" class="btn-fechar-modal">X</button>
                     </div>
-                </div>
-                <div class="grafico-pizza-container">
-                    <canvas id="grafico-pizza" width="350" height="350"></canvas>
-                    <div class="grafico-legenda" id="grafico-legenda"></div>
+                    <div class="modal-alertas-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+                        <div>
+                            <canvas id="chartFinanceiro"></canvas>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Contratuais</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${formatMoney(totais.c)}</div>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Sucumbenciais</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #10b981;">${formatMoney(totais.s)}</div>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Previsão</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${formatMoney(totais.p)}</div>
+                            </div>
+                            <div style="border-top: 2px solid #e5e7eb; padding-top: 15px; margin-top: 15px;">
+                                <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">TOTAL</div>
+                                <div style="font-size: 28px; font-weight: bold; color: #1f2937;">${formatMoney(totais.c + totais.s + totais.p)}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
-        
-        conteudoFinanceiro.innerHTML = html;
-        
-        // Desenhar o gráfico de pizza
+
+        // Usar setTimeout para garantir que o elemento existe antes de acessá-lo
         setTimeout(() => {
-            desenharGraficoPizza(dadosGrafico);
-            
-            // Event listener para mudança de mês
-            document.getElementById('select-mes').addEventListener('change', function(e) {
-                const mes = e.target.value;
-                desenharGraficoPizza(dadosGrafico, mes);
-            });
-        }, 50);
-    }
-    
-    // Função para desenhar gráfico de pizza
-    function desenharGraficoPizza(dados, mesSelecionado = 'todos') {
-        const canvas = document.getElementById('grafico-pizza');
-        if (!canvas) return;
-        
-        // Calcular valores baseados no mês
-        const dadosFiltrados = dados.map(item => {
-            let valorFiltrado = item.valor;
-            
-            if (mesSelecionado !== 'todos') {
-                // Simular variação mensal (70% a 130% do valor base)
-                const mes = parseInt(mesSelecionado);
-                const seed = mes * 123 + dados.indexOf(item) * 456;
-                const variacao = 0.7 + ((seed % 60) / 100);
-                valorFiltrado = item.valor * variacao;
-            }
-            
-            return { ...item, valor: valorFiltrado };
-        });
-        
-        const ctx = canvas.getContext('2d');
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = 120;
-        
-        // Calcular total
-        const total = dadosFiltrados.reduce((sum, item) => sum + item.valor, 0);
-        
-        // Estado de hover
-        let hoveredSlice = -1;
-        
-        function desenhar(hoverIndex = -1) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let currentAngle = -Math.PI / 2;
-            
-            // Desenhar fatias
-            dadosFiltrados.forEach((item, index) => {
-                const sliceAngle = (item.valor / total) * 2 * Math.PI;
-                const endAngle = currentAngle + sliceAngle;
-                
-                const isHovered = index === hoverIndex;
-                const currentRadius = isHovered ? radius + 8 : radius;
-                
-                const offsetX = isHovered ? Math.cos(currentAngle + sliceAngle / 2) * 8 : 0;
-                const offsetY = isHovered ? Math.sin(currentAngle + sliceAngle / 2) * 8 : 0;
-                
-                ctx.save();
-                
-                // Desenhar fatia (simples, sem 3D)
-                ctx.fillStyle = item.cor;
-                ctx.beginPath();
-                ctx.moveTo(centerX + offsetX, centerY + offsetY);
-                ctx.arc(centerX + offsetX, centerY + offsetY, currentRadius, currentAngle, endAngle);
-                ctx.lineTo(centerX + offsetX, centerY + offsetY);
-                ctx.closePath();
-                ctx.fill();
-                
-                // Desenhar borda
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(centerX + offsetX, centerY + offsetY);
-                ctx.arc(centerX + offsetX, centerY + offsetY, currentRadius, currentAngle, endAngle);
-                ctx.lineTo(centerX + offsetX, centerY + offsetY);
-                ctx.closePath();
-                ctx.stroke();
-                
-                // Desenhar percentual
-                const middleAngle = currentAngle + sliceAngle / 2;
-                const textRadius = currentRadius * 0.7;
-                const textX = centerX + offsetX + Math.cos(middleAngle) * textRadius;
-                const textY = centerY + offsetY + Math.sin(middleAngle) * textRadius;
-                
-                const percentage = ((item.valor / total) * 100).toFixed(1);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 14px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-                ctx.shadowBlur = 4;
-                ctx.fillText(`${percentage}%`, textX, textY);
-                
-                ctx.restore();
-                
-                currentAngle = endAngle;
-            });
-        }
-        
-        // Evento de mouse para hover
-        canvas.onmousemove = function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            
-            const dx = mouseX - centerX;
-            const dy = mouseY - centerY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance <= radius + 8) {
-                const angle = Math.atan2(dy, dx);
-                let adjustedAngle = angle + Math.PI / 2;
-                if (adjustedAngle < 0) adjustedAngle += 2 * Math.PI;
-                
-                let cumulative = 0;
-                let newHoveredSlice = -1;
-                
-                for (let i = 0; i < dadosFiltrados.length; i++) {
-                    const sliceAngle = (dadosFiltrados[i].valor / total) * 2 * Math.PI;
-                    cumulative += sliceAngle;
-                    
-                    if (adjustedAngle <= cumulative) {
-                        newHoveredSlice = i;
-                        break;
+            const ctx = document.getElementById('chartFinanceiro');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Contratuais', 'Sucumbenciais', 'Previsão'],
+                        datasets: [{
+                            data: [totais.c, totais.s, totais.p],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
+                            borderColor: ['#1e40af', '#047857', '#d97706'],
+                            borderWidth: 2,
+                            hoverBorderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 12, weight: 'bold' },
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = formatMoney(context.parsed);
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-                
-                if (newHoveredSlice !== hoveredSlice) {
-                    hoveredSlice = newHoveredSlice;
-                    canvas.style.cursor = 'pointer';
-                    desenhar(hoveredSlice);
-                }
-            } else if (hoveredSlice !== -1) {
-                hoveredSlice = -1;
-                canvas.style.cursor = 'default';
-                desenhar();
+                });
             }
-        };
-        
-        canvas.onmouseleave = function() {
-            hoveredSlice = -1;
-            canvas.style.cursor = 'default';
-            desenhar();
-        };
-        
-        // Desenhar inicialmente
-        desenhar();
-        
-        // Criar legenda
-        const legendaDiv = document.getElementById('grafico-legenda');
-        legendaDiv.innerHTML = dadosFiltrados.map(item => `
-            <div class="legenda-item">
-                <div class="legenda-cor" style="background: linear-gradient(135deg, ${item.cor}, ${item.corEscura})"></div>
-                <div class="legenda-info">
-                    <div class="legenda-label">${item.label}</div>
-                    <div class="legenda-valor">${formatarMoeda(item.valor)}</div>
-                </div>
-            </div>
-        `).join('');
-    }
+        }, 100);
+    });
+
+    // Funções Globais (para o HTML chamar)
+    window.excluirProcesso = function(id) {
+        if(confirm('Deseja excluir?')) {
+            processos = processos.filter(p => p.id !== id);
+            localStorage.setItem('processos', JSON.stringify(processos));
+            renderizarProcessos();
+            calcularTotais();
+        }
+    };
     
-    // Abrir modal financeiro
-    if (btnFinanceiro) {
-        btnFinanceiro.addEventListener('click', function() {
-            renderizarFinanceiro();
-            modalFinanceiro.classList.add('active');
-        });
-    }
+    window.editarProcesso = function(id) {
+        localStorage.setItem('processoEditando', id);
+        window.location.href = 'cadastro.html'; // Assume que existe
+    };
+
+    // Listeners da Lista
+    searchInput.addEventListener('input', () => {
+        clearSearchBtn.style.display = searchInput.value ? 'block' : 'none';
+        renderizarProcessos();
+    });
     
-    // Fechar modal financeiro
-    if (btnFecharFinanceiro) {
-        btnFecharFinanceiro.addEventListener('click', function() {
-            modalFinanceiro.classList.remove('active');
-        });
-    }
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        renderizarProcessos();
+        clearSearchBtn.style.display = 'none';
+    });
+
+    filterSituacao.addEventListener('change', renderizarProcessos);
     
-    // Fechar modal ao clicar fora
-    if (modalFinanceiro) {
-        modalFinanceiro.addEventListener('click', function(e) {
-            if (e.target === modalFinanceiro) {
-                modalFinanceiro.classList.remove('active');
-            }
-        });
-    }
-    
-    // ========================================
-    // INICIALIZAÇÃO
-    // ========================================
-    
-    // Renderizar processos ao carregar
+    document.getElementById('btn-novo-processo').addEventListener('click', () => {
+        localStorage.removeItem('processoEditando');
+        window.location.href = 'cadastro.html'; 
+    });
+
+    // Botão Sair
+    document.getElementById('btn-sair').addEventListener('click', (e) => {
+        e.preventDefault();
+        if(confirm('Sair do sistema?')) window.location.href = 'login.html';
+    });
+
+    // Inicialização
     renderizarProcessos();
-    
-    // Atualizar badge de alertas
-    renderizarAlertas();
-    
-    console.log('Sistema de listagem de processos inicializado');
-    console.log('Total de processos:', processos.length);
+    atualizarPeriodo(); // Inicia calculando mes atual
+    atualizarBadgeAlertas(); // Atualiza badge de alertas
 });

@@ -6,6 +6,8 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: var(--spacing-lg) var(--spacing-md);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* ========================================
@@ -14,6 +16,7 @@
 
 .action-bar {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: var(--spacing-md);
@@ -365,9 +368,10 @@
 
 .table-container {
     background: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 1px 3px var(--shadow);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    margin-top: 20px;
 }
 
 .processos-table {
@@ -376,48 +380,51 @@
 }
 
 .processos-table thead {
-    background: var(--gray-50);
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
 }
 
 .processos-table th {
-    padding: 16px;
+    padding: 18px 16px;
     text-align: left;
     font-size: var(--font-size-small);
-    font-weight: 600;
-    color: var(--gray-700);
+    font-weight: 700;
+    color: white;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--gray-200);
+    letter-spacing: 0.8px;
+    border: none;
 }
 
 .processos-table th.th-actions {
     text-align: center;
-    width: 120px;
+    width: 140px;
 }
 
 .processos-table tbody tr.processo-row {
-    border-bottom: 1px solid var(--gray-200);
-    transition: background-color 0.15s ease;
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.25s ease;
 }
 
 .processos-table tbody tr.processo-row:hover {
-    background: var(--gray-50);
+    background: #f9fafb;
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1);
 }
 
 .processos-table td {
     padding: 16px;
     font-size: var(--font-size-base);
-    color: var(--gray-800);
+    color: #374151;
 }
 
 .td-numero {
-    font-weight: 600;
-    color: var(--primary);
+    font-weight: 700;
+    color: #3b82f6;
     font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
 }
 
 .td-autor {
-    color: var(--gray-700);
+    color: #1f2937;
+    font-weight: 500;
 }
 
 .td-situacao {
@@ -426,45 +433,85 @@
 
 .badge-situacao {
     display: inline-block;
-    padding: 4px 12px;
+    padding: 6px 14px;
     background: var(--gray-100);
     color: var(--gray-700);
-    border-radius: 12px;
+    border-radius: 20px;
     font-size: var(--font-size-small);
-    font-weight: 500;
+    font-weight: 600;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.badge-situacao[data-status="Em andamento"] {
+    background: #dbeafe;
+    color: #0c4a6e;
+    border-color: #7dd3fc;
+}
+
+.badge-situacao[data-status="Aguardando julgamento"] {
+    background: #fef3c7;
+    color: #78350f;
+    border-color: #fde68a;
+}
+
+.badge-situacao[data-status="Sentenciado"] {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.badge-situacao[data-status="Arquivado"] {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+.badge-situacao[data-status="Suspenso"] {
+    background: #fee2e2;
+    color: #7f1d1d;
+    border-color: #fecaca;
 }
 
 .td-actions {
     text-align: center;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
 }
 
 .td-actions .btn-action {
-    background: none;
-    border: 1px solid var(--gray-300);
-    padding: 8px;
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
-    color: var(--gray-600);
+    color: #6b7280;
     transition: all 0.2s ease;
-    margin: 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .td-actions .btn-action:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: var(--gray-50);
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .td-actions .btn-view:hover {
     border-color: #3b82f6;
-    color: #3b82f6;
-    background: #eff6ff;
+    color: white;
+    background: #3b82f6;
 }
 
 .td-actions .btn-delete:hover {
     border-color: #ef4444;
-    color: #ef4444;
-    background: #fef2f2;
+    color: white;
+    background: #ef4444;
 }
 
 /* ========================================
@@ -1025,6 +1072,11 @@
     .search-container {
         max-width: none;
     }
+
+    .filter-container {
+        flex-direction: column;
+        width: 100%;
+    }
     
     .btn-novo-processo {
         width: 100%;
@@ -1044,15 +1096,356 @@
         margin: 0 2px;
         padding: 6px;
     }
+
+    .listagem-wrapper {
+        padding: var(--spacing-md);
+    }
+
+    .financeiro-dashboard {
+        padding: var(--spacing-md);
+    }
+
+    .financeiro-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .financeiro-controls {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    #select-periodo {
+        width: 100%;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .header-titles h1 {
+        font-size: 20px;
+    }
+
+    .user-badge {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 
 @media (max-width: 480px) {
     .listagem-wrapper {
-        padding: var(--spacing-md) var(--spacing-sm);
+        padding: var(--spacing-sm);
     }
     
     .processos-table th:nth-child(3),
     .processos-table td:nth-child(3) {
         display: none;
     }
+
+    .processos-table th:nth-child(n+6),
+    .processos-table td:nth-child(n+6) {
+        display: none;
+    }
+
+    .processos-table {
+        font-size: 12px;
+    }
+
+    .processos-table th,
+    .processos-table td {
+        padding: 8px 4px;
+    }
+
+    .financeiro-dashboard {
+        padding: var(--spacing-sm);
+        border-radius: 8px;
+    }
+
+    .financeiro-header {
+        flex-direction: column;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .financeiro-controls {
+        width: 100%;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .search-input-list {
+        padding: 10px 35px 10px 10px;
+    }
+
+    .search-container {
+        min-width: 100%;
+    }
+
+    .filter-label {
+        font-size: 12px;
+    }
+
+    .btn-novo-processo {
+        padding: var(--spacing-md);
+    }
+
+    .header-titles h1 {
+        font-size: 18px;
+    }
+
+    .user-details {
+        text-align: left;
+    }
+}
+
+/* Media query adicional para telas muito pequenas (< 375px) */
+@media (max-width: 374px) {
+    .header {
+        padding: var(--spacing-md) var(--spacing-xs);
+    }
+
+    .header h1 {
+        font-size: 16px;
+    }
+
+    .user-badge {
+        gap: 8px !important;
+        padding: 6px 12px !important;
+    }
+
+    .processos-table {
+        font-size: 11px;
+    }
+
+    .btn-novo-processo {
+        font-size: 12px;
+        padding: 10px 12px;
+    }
+}
+
+/* Media query para tablets em paisagem (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .listagem-wrapper {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .action-bar {
+        gap: var(--spacing-md);
+    }
+
+    .search-container {
+        max-width: 350px;
+    }
+
+    .financeiro-dashboard {
+        padding: 20px;
+    }
+
+    .processos-table {
+        font-size: 14px;
+    }
+}
+
+/* AJUSTE CABEÇALHO */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+.header-titles h1 { margin: 0; font-size: 22px; }
+
+/* DASHBOARD FINANCEIRO */
+.financeiro-dashboard {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.financeiro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.financeiro-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.date-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f4f6;
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.card-summary {
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 5px solid #ccc;
+    background: #f9fafb;
+}
+
+.card-summary.income { border-color: #10b981; }
+.card-summary.expense { border-color: #ef4444; }
+.card-summary.balance { border-color: #374151; }
+
+.card-summary span { display: block; font-size: 13px; color: #6b7280; }
+.card-summary strong { font-size: 22px; color: #111827; }
+
+.chart-wrapper { height: 320px; margin-bottom: 20px; }
+
+.financeiro-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.btn-export {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+}
+.btn-export.pdf { background: #e11d48; }
+.btn-export.excel { background: #166534; }
+
+/* ========================================
+   CORREÇÃO CABEÇALHO (Header)
+======================================== */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Garante alinhamento vertical central */
+    width: 100%;
+    gap: 20px;
+}
+
+.header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-info h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header-info .subtitle {
+    margin: 4px 0 0 0;
+    opacity: 0.8;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+}
+
+#usuario-nome {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+#btn-sair {
+    font-size: 12px;
+    color: #e0e7ff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+#btn-sair:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* ========================================
+   MODAL DE INTERVALO E BOTÕES
+======================================== */
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-outline:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+#display-intervalo {
+    padding: 4px 8px;
+    background: #eef2ff;
+    border-radius: 4px;
+    color: #4f46e5;
+    font-size: 12px;
+}
+
+/* Correções de layout solicitadas */
+.header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+/* Estilo dos Cards Financeiros para combinar com o tema */
+.card-fin {
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+.card-fin:hover {
+    transform: translateY(-2px);
+}
+
+/* Estilo do botão Outline para o financeiro */
+.btn-outline {
+    transition: all 0.2s;
+    font-weight: 500;
+}
+.btn-outline:hover {
+    background-color: #f3f4f6 !important;
+}
+
+/* Garante que o modal de datas fique acima de tudo */
+#modal-datas {
+    z-index: 1000;
 }
